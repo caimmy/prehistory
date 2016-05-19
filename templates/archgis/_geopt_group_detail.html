@@ -1,0 +1,249 @@
+{% extends "/layout/_fbase.html" %}
+{% block title %}地理点位集合{% endblock %}
+{% block cur_nav_func %}地理点位集合观察{% endblock %}
+{% block content %}
+    <div class="row" style="margin-bottom: 5px;">
+        <button type="button" class="btn btn-primary" onclick="addGeoPtUnit()">新建坐标点
+        </button>
+        <a href="{{ url_watch_geogrp }}?gid={{ gid }}" target="_blank" type="button" class="btn btn-info">转入ArchGIS地图</a>
+        <a href="{{ url_watch_baidu_geogrp }}?gid={{ gid }}" target="_blank" type="button" class="btn btn-info">转入BAIDU地图</a>
+        <button type="button" class="btn btn-danger pull-right" onclick="deleteGeoUnitGroup()">删除地理点位集合 (危险操作)</button>
+    </div>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">观察集合名： {{ geo_point_group['name'] }}</h3>
+            </div>
+            <div class="panel-body">
+                <div class="1"></div>
+                <div class="10">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="col-md-2">标签</th>
+                            <th class="col-md-1">地图类型</th>
+                            <th class="col-md-2">经度</th>
+                            <th class="col-md-2">维度</th>
+                            <th class="col-md-1">高度</th>
+                            <th class="col-md-1">面积</th>
+                            <th class="col-md-2">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for _geo_point in geo_point_units %}
+                            <tr>
+                                <td title="{{ _geo_point['desc'] }}">{{ _geo_point['name'] }}</td>
+                                <td>{{ _geo_point['map_type'] }}</td>
+                                <td>{{ _geo_point['longitude'] }}</td>
+                                <td>{{ _geo_point['latitude'] }}</td>
+                                <td>{{ _geo_point['high'] }}</td>
+                                <td>{{ _geo_point['area'] }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="delGeoPt({{ _geo_point['group_id'] }}, {{ _geo_point['id'] }})">删除</button>
+                                    <button type="button" class="btn btn-warning btn-sm" onclick="modifyGeoPt({{ _geo_point['group_id'] }}, {{ _geo_point['id'] }})">修改</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="1"></div>
+            </div>
+            <div class="panel-footer">
+                <a href="{{ url_module_index }}">返回集合点列表页</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_add_geo_point" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="frm_add_geopoint" class="form-horizontal" action="{{ url_add_geopoint }}" method="POST">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">新增地理坐标点</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <input type="hidden" name="gid" value="{{ gid }}"/>
+                            <input type="hidden" name="oper" id="oper" value="create" />
+                            <input type="hidden" name="pid" id="pid" />
+                            <label for="geo_name" class="col-sm-2 control-label">名称</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" required="required" name="geo_name"
+                                       id="geo_name" placeholder="坐标点位名称">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">坐标系统</label>
+                            <div class="col-sm-10">
+                                <select class="col-xs-12" name="map_type" id="map_type">
+                                    <option value="{{ map_gps_dms }}">GPS(DMS)</option>
+                                    <option value="{{ map_gps_ddd }}">GPS(DDD)</option>
+                                    <option value="{{ map_baidu_5 }}">百度地图</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude" class="col-sm-2 control-label">经度</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" required="required" name="longitude"
+                                       id="longitude" placeholder="XX度XX分XX秒 or 数值">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude" class="col-sm-2 control-label">纬度</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="latitude" required="required"
+                                       id="latitude" placeholder="XX度XX分XX秒 or 数值">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="area" class="col-sm-2 control-label">面积</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" name="area" required="required" value="0"
+                                        id="area" placeholder="据落点的探测面积，0表示无数据">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="high" class="col-sm-2 control-label">海拔高度</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" name="high" value="0"
+                                        id="high" placeholder="据落点的海拔高度，0表示无数据">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="desc" class="col-sm-2 control-label" name="desc">描述</label>
+
+                            <div class="col-sm-10">
+                                <textarea id="desc" name="desc" placeholder="地理坐标点描述" rows="3"
+                                          class="form-control"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <!-- 删除集合点组合的确认对话框 -->
+    <div class="modal fade" id="dlg_del_geogroup" tabindex="-1" role="dialog" aria-labelledby="dlg_del_geogroup">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">危险操作</h4>
+                </div>
+                <div class="modal-body">
+                    <span style="margin-bottom: 25px;">&nbsp;&nbsp;&nbsp;&nbsp;您的操作会<label style="color: red;">删除</label>地理<label style="color: darkgreen;">坐标点观察集合</label>及其所拥有的<label style="color: darkgreen;">所有观察点数据</label>，该操作<label style="color: red;">不可恢复</label>，请输入登录密码确认后继续往下执行！</span>
+
+                    <div>
+                        <form class="form-horizontal" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label for="pwd_confirm" class="col-sm-2 control-label">登录密码</label>
+
+                                <div class="col-sm-10">
+                                    <input type="password" class="form-control" id="pwd_confirm" placeholder="通过登录密码确认本次操作！">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="doRemoveGeoGroup()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var _gid = "{{ gid }}";
+
+        function deleteGeoUnitGroup() {
+            $("#dlg_del_geogroup").modal({
+                show: true,
+                keyboard: false
+            })
+        }
+
+        /**
+         * 创建坐标点
+         */
+        function addGeoPtUnit()
+        {
+            $("#frm_add_geopoint")[0].reset();
+            $("#modal_add_geo_point").modal({
+                backdrop: "static"
+            });
+        }
+
+        /**
+         * 修改坐标点
+         * @param gid 坐标的组编号
+         * @param pid 坐标的编号
+         */
+        function modifyGeoPt(gid, pid)
+        {
+            $.get("{{ url_query_geopoint }}", {pid: pid}, function(resp){
+                if (resp.success) {
+                    $("#oper").val("update");
+                    $("#pid").val(pid);
+                    $("#geo_name").val(resp.data.name);
+                    $("#map_type").val(resp.data.map_type);
+                    $("#longitude").val(resp.data.longitude);
+                    $("#latitude").val(resp.data.latitude);
+                    $("#area").val(resp.data.area);
+                    $("#high").val(resp.data.high);
+                    $("#desc").val(resp.data.desc);
+                    $("#modal_add_geo_point").modal({
+                        backdrop: "static"
+                    });
+                }
+                else {
+                    $.phalert(resp.msg);
+                }
+            }, "json");
+        }
+
+        function doRemoveGeoGroup() {
+            var _pwd = $("#pwd_confirm").val();
+            if ("" == $.trim(_pwd)) {
+                alert("密码不能为空！");
+            }
+            else {
+                $.post("{{ url_del_geogrp }}", {gid: _gid, pwd: _pwd}, function(resp) {
+                    if (0 == resp.code) {
+                        window.location = "{{ url_module_index }}";
+                    }
+                    else {
+                        alert(resp.msg);
+                    }
+                }, "json");
+            }
+        }
+
+        function delGeoPt(gid, pid)
+        {
+            var ok = confirm("确认要删除地址信息吗？");
+            if (ok)
+            {
+                window.location.href = "{{ url_del_geopoint }}?gid=" + gid + "&geopt=" + pid;
+            }
+        }
+        </script>
+
+{% endblock %}

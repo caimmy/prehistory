@@ -1,0 +1,22 @@
+<div style="margin-left: 10px; margin-right: 10px;" id="{{ frm_id }}">
+    <form class="form-horizontal">
+    <input type="hidden" name="modify" value="{{ modify }}">
+    <input type="hidden" name="row_id" value="{{ row_id }}">
+        {% for _prop_item in properties %}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{ _prop_item["name"] }}</label>
+                <div class="col-sm-10">
+                    {% if _prop_item.typeOptions() %}
+                    <select class="form-control" name="{{ _prop_item['label'] }}">
+                    {% for _po in _prop_item.getPropertyOptions() %}
+                        <option value="{{ _po['label'] }}" {% if "1" == modify and datas.get(_prop_item["label"]) and _po['label'] == datas.get(_prop_item["label"]).value %}selected="selected" {% endif %}>{{ _po['name'] }}</option>
+                    {% endfor %}
+                    </select>
+                    {% else %}
+                        <input type="text" value="{% if "1" == modify and datas.get(_prop_item["label"]) %}{{ datas.get(_prop_item["label"]).value }}{% endif %}" class="form-control" name="{{ _prop_item["label"] }}">
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </form>
+</div>

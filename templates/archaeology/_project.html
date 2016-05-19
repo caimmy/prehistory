@@ -1,0 +1,315 @@
+{% extends "/layout/_fbase.html" %}
+{% block title %}定量实验室{% endblock %}
+{% block cur_nav_func %}定量实验室 实验项目{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ project['name'] }}</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row" style="margin-left: 10px;margin-bottom: 8px;">
+                    <div data-example-id="split-button-dropdown">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                文件 <span class="caret"></span>
+                              </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">导出(CSV)</a></li>
+                                <li><a href="#">导入(CSV|TXT)</a></li>
+                                <li><a href="{{ url_print_raw_data }}?pid={{ project['id'] }}&fmt=txt" target="_blank">输出txt</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">分享</a></li>
+                            </ul>
+                        </div>
+                        <!-- /btn-group -->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info">描述性统计(单参数)</button>
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_describe_data }}" target="_blank">数据描述</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </div>
+                        <!-- /btn-group -->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-warning">探索性统计</button>
+                            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </div>
+                        <!-- /btn-group -->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-danger">数据可视化</button>
+                            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </div>
+                        <!-- /btn-group -->
+                    </div>
+                </div>
+                <div data-example-id="togglable-tabs">
+                    <ul id="project_grid" class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class=""><a href="#datagrid" id="datagrid-tab" role="tab"
+                                                            data-toggle="tab"
+                                                            aria-controls="home" aria-expanded="true">数据表格</a>
+                        </li>
+                        <li role="presentation" class=""><a href="#property" role="tab" id="property-tab"
+                                                            data-toggle="tab"
+                                                            aria-controls="profile" aria-expanded="false">字段属性</a></li>
+                    </ul>
+                    <div id="project_tab_panel" class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade" id="datagrid" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <button id="btn_add_data" style="margin-left: 15px; margin-top: 3px; margin-bottom: 3px;" type="button" class="btn btn-primary"
+                                        onclick="showFrmAddProjectData()">添加数据
+                                </button>
+                            </div>
+                            <div id="tbl_project_data" class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10">
+                                    <table class="table table-hover table-bordered ph_tbl">
+                                    </table>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="property" aria-labelledby="profile-tab">
+                            <div id="tbl_project_property" class="row">
+
+                            </div>
+                            <div class="row">
+                                <button style="margin-left: 15px;" class="btn btn-primary" type="button"
+                                        onclick="showDlgAddProperty()">创建字段属性
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="dlg_add_property" tabindex="-1" role="dialog" aria-labelledby="add_property">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">添加数据网格字段</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="inputName" class="col-sm-2 control-label">名称</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputName" placeholder="属性名称：如 长度">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputLabel" class="col-sm-2 control-label">属性编号</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputLabel" placeholder="属性编号：如 length">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputType" class="col-sm-2 control-label">属性类型</label>
+
+                            <div class="col-sm-10">
+                                <select class="form-control" id="inputType">
+                                    <option value="{{ cls_property.TYPE_NAMING }}">名称变量</option>
+                                    <option value="{{ cls_property.TYPE_SEQUENCE }}">有序变量</option>
+                                    <option value="{{ cls_property.TYPE_NUMBER }}">数值变量</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputDesc" class="col-sm-2 control-label">描述</label>
+
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="inputDesc" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="pp_dlg_create_tip" class="alert alert-danger" role="alert">
+                        <strong>出错啦!</strong> <span id="pproperty_create_tip"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addPropertyForProject()">添加新属性</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <!-- Add Project Data -->
+    <div class="modal fade" id="dlg_add_data" tabindex="-1" role="dialog" aria-labelledby="add_data">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">新增数据</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="margin-left: 10px; margin-right: 10px;" id="frm_add_project_data"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="addProjectData()">新增数据</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        // 实验室编号
+        var lab_id = {{ project['l_id'] }};
+        // 实验项目编号
+        var proj_id = {{ project['id'] }};
+        // 创建字段属性的请求地址
+        var url_add_property = "{{ url_add_property }}";
+
+        $(document).ready(function () {
+            $("#pp_dlg_create_tip").hide();
+            refreshProjectDataTable();
+            refreshProjectPropertyTable();
+            {% if view_data_tab %}
+                $('#project_grid a[href="#datagrid"]').tab('show');
+            {% else %}
+                $('#project_grid a[href="#property"]').tab('show')
+            {% endif %}
+        });
+
+        function showDlgAddProperty() {
+            $("#pproperty_create_tip").text("");
+            $("#pp_dlg_create_tip").hide();
+            $("#dlg_add_property").modal({
+                show: true
+            });
+        }
+
+        function addPropertyForProject() {
+            var _property = {
+                name: $("#inputName").val(),
+                label: $("#inputLabel").val(),
+                type: $("#inputType").val(),
+                desc: $("#inputDesc").val(),
+                pid: proj_id
+            }
+
+            $.post(url_add_property, _property, function (resp) {
+                if (resp.success) {
+                    refreshProjectPropertyTable();
+                    refreshProjectDataTable();
+                    $("#dlg_add_property").modal("toggle");
+                }
+                else {
+                    $("#pproperty_create_tip").text(resp.msg);
+                    $("#pp_dlg_create_tip").show();
+                }
+            }, 'json');
+        }
+
+        /**
+         * 删除研究项目属性
+         * @param prop_id
+         * @param prop_name
+         */
+        function deleteProperty(prop_id, prop_name) {
+            var res = confirm("确实要删除项目属性 " + prop_name + " 及其所有数据？");
+            if (res) {
+                $.post("{{ url_del_property }}", {id: prop_id}, function (resp) {
+                    if (resp.success) {
+                        refreshProjectPropertyTable();
+                        refreshProjectDataTable();
+                    }
+                    else {
+                        $.bootalert("错误", resp.msg, "btn-danger");
+                    }
+                }, "json");
+            }
+        }
+
+        /**
+         * 刷新研究项目的属性表
+         */
+        function refreshProjectPropertyTable() {
+            $("#tbl_project_property").load("{{ url_load_property_tbl }}", {pid: proj_id});
+        }
+
+        /**
+         * 刷新研究项目的数据表
+         */
+        function refreshProjectDataTable() {
+            $("#tbl_project_data").load("{{ url_load_data_tbl }}", {pid: proj_id});
+        }
+
+        function showFrmAddProjectData() {
+            loadAddProjectDataForm();
+        }
+
+        /**
+         * 加载新增项目数据表单
+         */
+        function loadAddProjectDataForm() {
+            $("#btn_add_data").attr("disabled", "disabled");
+            $("#frm_add_project_data").load("{{ url_add_data_frm }}", {pid: proj_id}, function(){
+                $("#dlg_add_data").modal({show: true, backdrop:"static"});
+                $("#btn_add_data").removeAttr("disabled");
+            });
+        }
+
+        function addProjectData() {
+            var _new_data = _collectAddProjectDataFrmData()
+            $.post("{{ url_add_data_record }}", _new_data, function (resp) {
+                if (resp.success) {
+                    refreshProjectDataTable();
+                    $("#dlg_add_data").modal("hide");
+                }
+                else {
+                    $.phalert(resp.msg);
+                }
+            }, "json");
+        }
+
+        function _collectAddProjectDataFrmData() {
+            var _raw_data = $("#frm_add_project_data form").serializeArray();
+            var _data = {pid: proj_id};
+            for (var i = 0; i < _raw_data.length; i++) {
+                _data[_raw_data[i]["name"]] = _raw_data[i]["value"];
+            }
+            return _data;
+        }
+    </script>
+{% endblock %}

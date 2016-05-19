@@ -1,0 +1,109 @@
+<div class="row" id="tbl_project_data">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <table class="table table-hover table-bordered ph_tbl">
+            <thead>
+            <tr>
+            <th>id</th>
+                {% for _prop_item in properties %}
+                    <th title="{{ _prop_item['label'] }}">{{ _prop_item['name'] }}</th>
+                {% endfor %}
+            <th>#</th>
+            </tr>
+            </thead>
+        <tbody>
+        {% for _data_item in records %}
+            <tr>
+            <td>{{ loop.index }}</td>
+            {% for _pi in properties %}
+                <td>{% if records[_data_item][_pi['label']] %}{{ records[_data_item][_pi['label']].loadValueLabel() }}{% else %}{% endif %}</td>
+            {% endfor %}
+            <td>
+                <span title="编辑行数据" onclick="modifyFrm('{{ _data_item }}')" class="glyphicon glyphicon-edit" style="color: darkred;" aria-hidden="true"></span> &nbsp;
+                <span title="删除行" onclick="deleteRow('{{ _data_item }}')" class="glyphicon glyphicon-remove" style="color: red;" aria-hidden="true"></span>
+            </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    <div class="col-md-1"></div>
+
+</div>
+<!-- Update Project Data -->
+    <div class="modal fade" id="dlg_edit_data" tabindex="-1" role="dialog" aria-labelledby="edit_data">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">编辑数据</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="margin-left: 10px; margin-right: 10px;" id="frm_update_project_data"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProjectItemData()">更新数据</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+    var update_addr = "{{ url_update_row_data }}";
+    var proj_id = "{{ project['id'] }}";
+    var sel_row_id = null;
+
+    function modifyFrm(rowid) {
+        $("#dlg_edit_data").modal({show: true});
+        loadUpdateProjectDataFrm(proj_id, rowid)
+    }
+
+    /**
+     * 删除某一条记录
+     */
+    function deleteRow(rowid) {
+        $.phconfirm("是否确认删除该条数据记录？", function() {
+            $.post("{{ url_del_row }}", {pid: proj_id, row_id: rowid}, function(resp) {
+                $.phconfirm_dismiss();
+                if (resp.success) {
+                    refreshProjectDataTable();
+                }
+                else {
+                    $.phalert(resp.msg);
+                }
+            }, "json");
+        })
+    }
+
+    /**
+     * 加载更新数据表单
+     * @param pid 实验项目编号
+     * @param rowid 实验项目行编号
+     */
+    function loadUpdateProjectDataFrm(pid, rowid) {
+        $("#frm_update_project_data").load("{{ url_update_data_frm }}", {pid: pid, rowid: rowid});
+    }
+
+    function updateProjectItemData() {
+        var update_data = _collectUpdateProjectDataFrmData();
+        $.post("{{ url_update_row }}", update_data, function(resp) {
+            if (resp.success) {
+                refreshProjectDataTable();
+                $("#dlg_edit_data").modal("hide");
+            }
+            else {
+                $.phalert(resp.msg);
+            }
+        }, "json");
+    }
+
+    function _collectUpdateProjectDataFrmData() {
+        var _raw_data = $("#frm_update_project_data form").serializeArray();
+        var _data = {pid: proj_id};
+        for (var i = 0; i < _raw_data.length; i++) {
+            _data[_raw_data[i]["name"]] = _raw_data[i]["value"];
+        }
+        return _data;
+    }
+</script>

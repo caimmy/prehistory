@@ -1,0 +1,75 @@
+{% extends "/layout/_fbase.html" %}
+{% block cur_nav_func %}数据可视化{% endblock %}
+{% block content %}
+    <div>sadfafasdfasfasdfa</div>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <div class="row" style="height: 300px;" id="echart_obj"></div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+
+    <script type="text/javascript">
+        var phChart = null;
+        $(document).ready(function () {
+            phChart = echarts.init(document.getElementById('echart_obj'));
+            phChart.showLoading({
+                text: '正在努力的读取数据中...'
+            });
+            phChart.hideLoading();
+            var option = {
+                legend: {                                   // 图例配置
+                    padding: 5,                             // 图例内边距，单位px，默认上下左右内边距为5
+                    itemGap: 10,                            // Legend各个item之间的间隔，横向布局时为水平间隔，纵向布局时为纵向间隔
+                    data: ['ios', 'android']
+                },
+                tooltip: {                                  // 气泡提示配置
+                    trigger: 'item'                         // 触发类型，默认数据触发，可选为：'axis'
+                },
+                xAxis: [                                    // 直角坐标系中横轴数组
+                    {
+                        type: 'category',                   // 坐标轴类型，横轴默认为类目轴，数值轴则参考yAxis说明
+                        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                    }
+                ],
+                yAxis: [                                    // 直角坐标系中纵轴数组
+                    {
+                        type: 'value',                      // 坐标轴类型，纵轴默认为数值轴，类目轴则参考xAxis说明
+                        boundaryGap: [0.1, 0.1],            // 坐标轴两端空白策略，数组内数值代表百分比
+                        splitNumber: 4                      // 数值轴用，分割段数，默认为5
+                    }
+                ],
+                series: [
+                    {
+                        name: 'ios',                        // 系列名称
+                        type: 'line',                       // 图表类型，折线图line、散点图scatter、柱状图bar、饼图pie、雷达图radar
+                        data: [112, 23, 45, 56, 233, 343, 454, 89, 343, 123, 45, 123]
+                    },
+                    {
+                        name: 'android',                    // 系列名称
+                        type: 'line',                       // 图表类型，折线图line、散点图scatter、柱状图bar、饼图pie、雷达图radar
+                        data: [45, 123, 145, 526, 233, 343, 44, 829, 33, 123, 45, 13]
+                    }
+                ]
+            };
+            phChart.setOption(option);
+
+            // 增加些数据------------------
+            option.legend.data.push('win');
+            option.series.push({
+                name: 'win',                            // 系列名称
+                type: 'line',                           // 图表类型，折线图line、散点图scatter、柱状图bar、饼图pie、雷达图radar
+                data: [112, 23, 99, 56, 233, 343, 454, 89, 343, 123, 45, 123]
+            });
+            phChart.setOption(option);
+
+
+// 图表清空-------------------
+            //phChart.clear();
+
+// 图表释放-------------------
+            //phChart.dispose();
+        })
+    </script>
+{% endblock %}

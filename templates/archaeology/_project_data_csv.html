@@ -1,0 +1,8 @@
+{% for _prop_item in properties %}
+    {{ _prop_item['name'] }} {% if not loop.last %},{% endif %}
+{% endfor %}
+{% for _data_item in records %}
+    {% for _pi in properties %}
+        {% if records[_data_item][_pi['label']] %}{{ records[_data_item][_pi['label']].loadValueLabel() }}{% else %}{% endif %}{% if not loop.last %},{% endif %}
+    {% endfor %}
+{% endfor %}

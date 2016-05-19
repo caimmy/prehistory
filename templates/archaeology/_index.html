@@ -1,0 +1,76 @@
+{% extends "/layout/_fbase.html" %}
+{% block title %}定量实验室{% endblock %}
+{% block cur_nav_func %}定量实验室{% endblock %}
+{% block content %}
+    <div class="row">
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#dlg_create_laborary">新建实验室
+        </button>
+    </div>
+    <div class="row" style="margin-top: 20px;">
+        {% for _laborary_item in laborary_list %}
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <!-- <img src="..." alt="..."> -->
+                    <div class="caption">
+                        <h3 style="color: #007788;">{{ _laborary_item['name'] }}</h3>
+
+                        <div class="bs-callout bs-callout-info">
+                            <p style="text-indent: 2em;">{{ _laborary_item['desc'] }}</p>
+                        </div>
+                        <p>{{ _laborary_item['unit'] }}</p>
+                        <p>{{ _laborary_item['create_tm'][:-9] }}</p>
+                        <div class="row">
+                            <p style="padding-right: 15px;"><a href="{{ url_view_laborary }}?lid={{ _laborary_item['id'] }}" class="btn btn-primary pull-right" role="button">进入实验室</a></p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="modal fade" id="dlg_create_laborary" tabindex="-1" role="dialog" aria-labelledby="create_laborary">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">创建定量实验室</h4>
+                </div>
+                <form class="form-horizontal" method="POST" action="{{ url_create_laborary }}">
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label for="l_name" class="col-sm-2 control-label">名称</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="name" required="required" id="l_name"
+                                       placeholder="定量实验室的名称">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="l_unit" class="col-sm-2 control-label">单位</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="unit" id="l_unit"
+                                       placeholder="实验室信息所属的单位">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="l_desc" class="col-sm-2 control-label">描述</label>
+
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="l_desc" name="desc" rows="4"
+                                          placeholder="实验室的描述信息......"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">创建</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

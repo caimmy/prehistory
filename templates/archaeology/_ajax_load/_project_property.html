@@ -1,0 +1,118 @@
+<div id="tbl_project_property" class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <table class="table table-hover table-bordered ph_tbl">
+            <thead>
+            <tr>
+                <th>属性名</th>
+                <th>属性编号</th>
+                <th>属性类型</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for _p_item in properties %}
+                <tr>
+                    <td>{{ _p_item['name'] }}</td>
+                    <td>{{ _p_item['label'] }}</td>
+                    <td>{{ _p_item.getTypeLabel() }}</td>
+                    <td>
+                    <button class="btn btn-sm btn-danger" type="button" onclick="modifyPropertyItem('{{ _p_item["id"] }}')">修改</button>
+                        <button class="btn btn-sm btn-warning" type="button"
+                                onclick="deleteProperty('{{ _p_item["id"] }}', '{{ _p_item["name"] }}')">删除
+                        </button>
+                        {% if _p_item.typeIsSequence() %}
+                            &nbsp;&nbsp;<button class="btn btn-sm btn-primary" onclick="setPropertyOptions({{ _p_item['id'] }})">设置度量</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-1"></div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="dlg_set_property_options" tabindex="-1" role="dialog" aria-labelledby="set_property_options">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">设置属性变量</h4>
+      </div>
+      <div class="modal-body">
+          <div style="margin-left: 10px; margin-right: 10px;" id="frm_set_property_option"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="dlg_modify_property" tabindex="-1" role="dialog" aria-labelledby="dlg_modify_property">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">修改字段</h4>
+      </div>
+      <div class="modal-body">
+          <div style="margin-left: 10px; margin-right: 10px;" id="frm_modify_property_item"></div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="exeModifyPropertyItem()">提交修改</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    /**
+     * 删除研究项目属性
+     * @param prop_id
+     * @param prop_name
+     */
+    function deleteProperty(prop_id, prop_name) {
+        $.phconfirm("确实要删除项目属性 " + prop_name + " 及其所有数据？", function()
+        {
+            $.post("{{ url_del_property }}", {id: prop_id}, function (resp) {
+                $.phconfirm_dismiss();
+                if (resp.success) {
+                    $("#tbl_project_property").load("{{ url_load_property_tbl }}", {pid: proj_id});
+                    refreshProjectDataTable();
+                }
+                else {
+                    alert(resp.msg);
+                }
+            }, "json");
+        });
+    }
+
+    /**
+     * 设置字段属性的选项
+     */
+    function setPropertyOptions(pid) {
+        $("#dlg_set_property_options").modal({show: true, backdrop: 'static', keyboard: false});
+        $("#frm_set_property_option").load("{{ url_set_property_options }}", {pid: pid});
+    }
+
+    /**
+     * 修改字段属性
+     * @param pid
+     */
+    function modifyPropertyItem(pid) {
+        $("#dlg_modify_property").modal({show: true, backdrop: 'static', keyboard: false});
+        $("#frm_modify_property_item").load("{{ url_modify_property }}", {prop_id: pid});
+    }
+
+    function exeModifyPropertyItem() {
+        var frm_content = $("#form_content_property_item").serializeArray();
+        var _submit_value = {};
+        for (var i in frm_content) {
+            _submit_value[frm_content[i]['name']] = frm_content[i]['value'];
+        }
+        $.phalert("TODO 待实现！");
+        console.log(_submit_value);
+    }
+</script>

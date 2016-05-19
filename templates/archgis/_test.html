@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>ArchGIS</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/dijit/themes/claro/claro.css">
+    <script src="http://js.arcgis.com/3.13/"></script>
+
+    <style>
+        html, body, #mapDiv {
+            padding: 0;
+            margin: 0;
+            height: auto;
+        }
+
+        #legendDiv {
+            background-color: #fff;
+            position: absolute !important;
+            z-index: 99;
+            top: 10px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body class="claro">
+<div id="dir"></div>
+<div id="mapDiv"></div>
+<script type="text/javascript">
+    var map, graphiclayer;
+    require([
+        "esri/map",
+            "esri/graphic",
+            "esri/layers/GraphicsLayer",
+            "dojo/dom",
+            "dojo/dom-attr",
+        "dojo/domReady!"
+    ], function (Map, Grahpic, GraphicsLayer, dom, domAttr) {
+        map = new Map("mapDiv", {
+        center: [115.416, 39.433],
+        zoom: 2,
+        basemap: "satellite"
+      });
+        graphiclayer = new GraphicsLayer();
+        map.addLayer(graphiclayer);
+
+        addMarker(graphiclayer, 115.416, 39.433);
+        addMarkerRawData(graphiclayer, "109度46分40秒", "31度17分20秒", "双堰塘", "新时期时代晚期临江聚落。");
+    });
+
+    function addMarker(gl, xx, yy)
+    {
+        var pt = new esri.geometry.Point(xx, yy, map.spatialReference);
+        var symbol = new esri.symbol.PictureMarkerSymbol({"angle":0,"xoffset":0,"yoffset":12,"type":"esriPMS","url":"http://static.arcgis.com/images/Symbols/Basic/RedStickpin.png","contentType":"image/png","width":24,"height":24});
+        var attr = {"address": '中华人民共和国 北京市'};
+        var infoTemplate = new esri.InfoTemplate("标题:${title}", "地址：${address}");
+        var graphic = new esri.Graphic(pt, symbol, attr, infoTemplate);
+        gl.add(graphic);
+    }
+
+    /**
+     * 按照原始的度、分、秒数据标注地图
+     * @param gl  GraphicLayer 图层
+     * @param xx  坐标经度
+     * @param yy  坐标纬度
+     * @param desc 坐标点描述
+     */
+    function addMarkerRawData(gl, xx, yy, title, desc)
+    {
+
+        var pt = new esri.geometry.Point(transAddressFromRaw(xx), transAddressFromRaw(yy), map.spatialReference);
+        var symbol = new esri.symbol.PictureMarkerSymbol({"angle":0,"xoffset":0,"yoffset":12,"type":"esriPMS","url":"http://static.arcgis.com/images/Symbols/Basic/RedStickpin.png","contentType":"image/png","width":24,"height":24});
+        var attr = {"title": title, "desc": desc};
+        var infoTemplate = new esri.InfoTemplate("地址:${title}", "描述：${desc}");
+        var graphic = new esri.Graphic(pt, symbol, attr, infoTemplate);
+        gl.add(graphic);
+    }
+
+    function transAddressFromRaw(pos)
+    {
+        var degree_pos = pos.indexOf("度");
+        var degree = parseInt(pos.substring(0, degree_pos));
+        pos = pos.substring(degree_pos + 1);
+
+        var minute_pos = pos.indexOf("分");
+        var minute = parseInt(pos.substring(0, minute_pos));
+        pos = pos.substring(minute_pos + 1);
+
+        var second_pos = pos.indexOf("秒");
+        var second = parseInt(pos.substring(0, second_pos));
+
+        var acturePos = degree + minute / 60.0 + second / 3600.0;
+        console.log(degree + " | " + minute + " | " + second);
+        console.log(acturePos);
+        return acturePos;
+    }
+</script>
+</body>
+</html>

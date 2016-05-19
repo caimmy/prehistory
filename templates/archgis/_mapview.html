@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>地理坐标集合观察</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/dijit/themes/claro/claro.css">
+    <script src="http://js.arcgis.com/3.13/"></script>
+    <script src="/static/jquery-1.11.3.min.js"></script>
+    <style>
+        html, body, #mapDiv {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #legendDiv {
+            background-color: #fff;
+            position: absolute !important;
+            z-index: 99;
+            top: 10px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+<div id="dir"></div>
+<div id="mapDiv">
+    <div id="BasemapToggle"></div>
+</div>
+<script type="text/javascript">
+    var map, graphiclayer;
+    require([
+        "esri/map",
+        "esri/graphic",
+        "esri/layers/GraphicsLayer",
+        "dojo/domReady!"
+    ], function (Map, Grahpic, GraphicsLayer) {
+        map = new Map("mapDiv", {
+        center: [115.416, 39.433],
+        zoom: 4,
+        basemap: "satellite"
+      });
+        graphiclayer = new GraphicsLayer();
+        map.addLayer(graphiclayer);
+
+        //addMarker(graphiclayer, 115.416, 39.433);
+        //graphiclayer.add(addMarkerRawData("109度46分40秒", "31度17分20秒", "双堰塘", "新时期时代晚期临江聚落。"));
+        {% for _vpt_dms in view_pts_dms %}
+            graphiclayer.add(addMarkerData('{{ _vpt_dms['longitude'] }}', '{{ _vpt_dms['latitude'] }}', '{{ _vpt_dms['name'] }}', '{{ _vpt_dms['desc'] | replace("\r\n", "<br />") }}'));
+        {% endfor %}
+        {% for _vpt_ddd in view_pts_ddd %}
+            graphiclayer.add(addMarkerRawData('{{ _vpt_ddd['longitude'] }}', '{{ _vpt_ddd['latitude'] }}', '{{ _vpt_ddd['name'] }}', '{{ _vpt_ddd['desc'] | replace("\r\n", "<br />") }}'));
+        {% endfor %}
+        {% for _vpt_baidu5 in view_pts_baidu5 %}
+            graphiclayer.add(addMarkerRawData('{{ _vpt_baidu5['longitude'] }}', '{{ _vpt_baidu5['latitude'] }}', '{{ _vpt_baidu5['name'] }}', '{{ _vpt_baidu5['desc'] | replace("\r\n", "<br />") }}'));
+        {% endfor %}
+    });
+
+    function addMarker(gl, xx, yy)
+    {
+        var pt = new esri.geometry.Point(xx, yy, map.spatialReference);
+        var symbol = new esri.symbol.PictureMarkerSymbol({"angle":0,"xoffset":0,"yoffset":12,"type":"esriPMS","url":"http://static.arcgis.com/images/Symbols/Basic/RedStickpin.png","contentType":"image/png","width":24,"height":24});
+        var attr = {"address": '中华人民共和国 北京市'};
+        var infoTemplate = new esri.InfoTemplate("标题:${title}", "地址：${address}");
+        var graphic = new esri.Graphic(pt, symbol, attr, infoTemplate);
+        gl.add(graphic);
+    }
+
+    /**
+     * 按照原始的gps数据标注地图
+     * @param gl  GraphicLayer 图层
+     * @param xx  坐标经度
+     * @param yy  坐标纬度
+     * @param desc 坐标点描述
+     */
+    function addMarkerRawData(xx, yy, title, desc)
+    {
+
+        var pt = new esri.geometry.Point(xx, yy, map.spatialReference);
+        //var symbol = new esri.symbol.PictureMarkerSymbol({"angle":0,"xoffset":2,"yoffset":8,"type":"esriPMS","url":"http://static.arcgis.com/images/Symbols/Basic/GoldShinyPin.png","contentType":"image/png","width":24,"height":24});
+        var symbol = new esri.symbol.PictureMarkerSymbol({"angle":0,"xoffset":0,"yoffset":10,"type":"esriPMS","url":"http://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png","contentType":"image/png","width":24,"height":24});
+        var attr = {"title": title, "desc": desc + "<br />经度：" + xx + "<br />纬度：" + yy};
+        var infoTemplate = new esri.InfoTemplate("地址:${title}", "描述：${desc}");
+        return new esri.Graphic(pt, symbol, attr, infoTemplate);
+    }
+
+    /**
+     * 按照度、分、秒数据标注地图
+     * @param gl  GraphicLayer 图层
+     * @param xx  坐标经度
+     * @param yy  坐标纬度
+     * @param desc 坐标点描述
+     */
+    function addMarkerData(xx, yy, title, desc)
+    {
+        var pt = new esri.geometry.Point(transAddressFromRaw(xx), transAddressFromRaw(yy), map.spatialReference);
+        //var symbol = new esri.symbol.PictureMarkerSymbol({"angle":0,"xoffset":2,"yoffset":8,"type":"esriPMS","url":"http://static.arcgis.com/images/Symbols/Basic/GoldShinyPin.png","contentType":"image/png","width":24,"height":24});
+        var symbol = new esri.symbol.PictureMarkerSymbol({"angle":0,"xoffset":0,"yoffset":10,"type":"esriPMS","url":"http://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png","contentType":"image/png","width":24,"height":24});
+        var attr = {"title": title, "desc": desc + "<br />经度：" + xx + "<br />纬度：" + yy};
+        var infoTemplate = new esri.InfoTemplate("地址:${title}", "描述：${desc}");
+        return new esri.Graphic(pt, symbol, attr, infoTemplate);
+    }
+
+    function addMarkerRawDataSecond(map, xx, yy, title, desc)
+    {
+        var infoSymbol = new esri.symbol.PictureMarkerSymbol("http://static.arcgis.com/images/Symbols/Shapes/BluePin1LargeB.png",24,24);
+        var park1 = new esri.Graphic({"geometry":{"x":transAddressFromRaw(xx),"y":transAddressFromRaw(yy)}});
+        park1.setSymbol(infoSymbol);
+        map.graphics.add(park1);
+    }
+
+    function transAddressFromRaw(pos)
+    {
+        var origin_pos = pos;
+        var degree_pos = pos.indexOf("度");
+        var degree = parseInt(pos.substring(0, degree_pos));
+        pos = pos.substring(degree_pos + 1);
+
+        var minute_pos = pos.indexOf("分");
+        var minute = parseInt(pos.substring(0, minute_pos));
+        pos = pos.substring(minute_pos + 1);
+
+        var second_pos = pos.indexOf("秒");
+        var second = parseInt(pos.substring(0, second_pos));
+
+        var acturePos = degree + minute / 60.0 + second / 3600.0;
+        console.log(origin_pos + " --> " + acturePos);
+        return acturePos;
+    }
+</script>
+</body>
+</html>

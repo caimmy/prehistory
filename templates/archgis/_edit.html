@@ -1,0 +1,117 @@
+{% extends "/layout/_nbase.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="flow">
+        <button class="btn btn-primary" onclick="show_modal_add_new_settlement()">添加聚落点</button>
+        <a href="/gis" class="btn btn-info pull-right">前往地图</a>
+    </div>
+    <div class="col-xs-10 col-md-12">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>地点</th>
+                <th>经度</th>
+                <th>纬度</th>
+                <th>描述</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for _settlement in settlements %}
+            <tr>
+                <td></td>
+                <td>{{ _settlement.name }}</td>
+                <td>{{ _settlement.long }}</td>
+                <td>{{ _settlement.lati }}</td>
+                <td>{{ _settlement.desc }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="add_settlement" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">添加新聚落点</h4>
+            </div>
+            <div class="modal-body">
+                <form id="frm_add_settlement" class="form-horizontal" action="{{ form_url }}" method="POST">
+                    <div class="form-group">
+                        <label for="settlement_name" class="col-sm-2 control-label">遗址名称</label>
+
+                        <div class="col-sm-10">
+                            <input type="text" required class="form-control" name="settlement_name" id="settlement_name" placeholder="遗址、聚落点名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="longitude" class="col-sm-2 control-label">经度</label>
+
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="longitude" id="longitude" placeholder="中心坐标经度">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="latitude" class="col-sm-2 control-label">纬度</label>
+
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="latitude" id="latitude" placeholder="中心坐标纬度">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="height_l" class="col-sm-2 control-label">高度下限</label>
+
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" name="height_l" id="height_l" placeholder="遗址海拔高度的最小值">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="height_h" class="col-sm-2 control-label">高度上限</label>
+
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" name="height_h" id="height_h" placeholder="遗址海拔高度的最高值">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="area" class="col-sm-2 control-label">面积</label>
+
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="area" id="area" placeholder="遗址探测面积">
+                                <div class="input-group-addon">平方米</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="desc" class="col-sm-2 control-label">附加描述</label>
+
+                        <div class="col-sm-10">
+                            <textarea class="form-control" name="desc" style="resize: none;" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    /**
+     * 添加一个新的聚落点
+     */
+    function show_modal_add_new_settlement() {
+        $('#add_settlement').modal({
+            keyboard: false
+        })
+    }
+
+</script>
+{% endblock %}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>百度地图系统</title>
+    <style type="text/css">
+        html {
+            height: 100%
+        }
+
+        body {
+            height: 100%;
+            margin: 0px;
+            padding: 0px
+        }
+
+        #container {
+            height: 100%
+        }
+    </style>
+    <script src="//cdn.bootcss.com/jquery/2.1.3/jquery.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak={{ key }}">
+    </script>
+</head>
+
+<body>
+<div id="container"></div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        init_map();
+        init_points();
+    });
+
+    function init_map()
+    {
+        map = new BMap.Map("container");          // 创建地图实例
+        var point = new BMap.Point(106.680656, 29.576196);  // 创建点坐标
+        //point.msg = "sadfas案例的是否就撒了地方";
+        map.centerAndZoom(point, 7);                 // 初始化地图，设置中心点坐标和地图级别
+        map.addControl(new BMap.NavigationControl());
+        map.addControl(new BMap.ScaleControl());
+        map.addControl(new BMap.OverviewMapControl());
+        map.addControl(new BMap.MapTypeControl());
+
+        // 在控制台打印拾取坐标信息
+        map.addEventListener("click", function(e) {
+            console.log("lng : " + e.point.lng + " lat : " + e.point.lat);
+        })
+    }
+
+    function init_points()
+    {
+        {% for pt_dms in view_pts_dms %}
+        set_point('{{ pt_dms['name'] }}', '{{ pt_dms['desc'] | replace("\r\n", "<br />") }}', '{{ pt_dms['longitude'] }}', '{{ pt_dms['latitude'] }}',
+            '{{ pt_dms['bm_longitude'] }}', '{{ pt_dms['bm_latitude'] }}', 'gps_dms');
+        {% endfor %}
+
+        {% for pt_ddd in view_pts_ddd %}
+            set_point('{{ pt_ddd['name'] }}', '{{ pt_ddd['desc'] | replace("\r\n", "<br />") }}', '{{ pt_ddd['longitude'] }}', '{{ pt_ddd['latitude'] }}',
+            '{{ pt_ddd['bm_longitude'] }}', '{{ pt_ddd['bm_latitude'] }}', 'gps_ddd');
+        {% endfor %}
+
+        {% for pt_baidu5 in view_pts_baidu5 %}
+            set_point('{{ pt_baidu5['name'] }}', '{{ pt_baidu5['desc'] | replace("\r\n", "<br />") }}', '{{ pt_baidu5['longitude'] }}', '{{ pt_baidu5['latitude'] }}',
+            '{{ pt_baidu5['longitude'] }}', '{{ pt_baidu5['latitude'] }}', 'baidu5');
+        {% endfor %}
+    }
+
+    function set_point(name, desc, longitude, latitude, bm_long, bm_lati, map_type)
+    {
+        var pt = new BMap.Point(bm_long, bm_lati);
+        var pt_marker = new BMap.Marker(pt);
+
+        var marker = new BMap.Marker(pt);
+        marker.geo_info = "经度：" + longitude + "<br />维度：" + latitude + "<br />坐标系：" + map_type;
+        marker.geo_desc = desc;
+        marker.addEventListener("click", function(e) {
+            var opts = {
+                width : 250,
+                height: 200,
+                title : name
+            }
+            var infoWindow = new BMap.InfoWindow(e.target.geo_info + "<br />" + e.target.geo_desc, opts);  // 创建信息窗口对象
+            map.openInfoWindow(infoWindow, pt);      // 打开信息窗口
+        });
+        map.addOverlay(marker);
+    }
+</script>
+</body>
+</html>

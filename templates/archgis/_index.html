@@ -1,0 +1,183 @@
+{% extends "/layout/_mbase.html" %}
+{% block title %}位置观察{% endblock %}
+{% block ext_header %}
+    <script type="text/javascript" src="/static/js/tools/archgis_tool.js"></script>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/dijit/themes/claro/claro.css">
+    <script src="http://js.arcgis.com/3.13/"></script>
+{% endblock %}
+{% block cur_nav_func %}位置观察{% endblock %}
+{% block content %}
+    <style>
+        #mapDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            margin-top: 15px;
+        }
+    </style>
+    <div role="tabpanel" data-example-id="togglable-tabs">
+        <ul id="myTab" class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#scattered_view" id="home-tab" role="tab" data-toggle="tab"
+                                                      aria-controls="home" aria-expanded="true">零散点观察</a></li>
+            <li role="presentation" class=""><a href="#aggregation_view" role="tab" id="profile-tab" data-toggle="tab"
+                                                aria-controls="profile" aria-expanded="false">集合点观察</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="scattered_view" aria-labelledby="home-tab">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="row">
+                        <div class="alert alert-danger" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <strong>注意!</strong> “零散点观察”提供临时的位置关系描述，并未在服务器端保存地点信息，如需记录永久性数据，请使用“集合点观察”功能。
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <form class="form-inline" method="POST" action="/gis/">
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="form-group">
+                                    <label for="longtitude">名称</label>
+                                    <input type="text" class="form-control" name="name" required="required"
+                                           id="viewpoint_name" placeholder="如：宜昌路家河">
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="form-group">
+                                    <label for="longtitude">经度</label>
+                                    <input type="text" class="form-control" name="longitude" required="required"
+                                           id="longtitude" placeholder="如：110度99分0秒">
+                                </div>
+                                <div class="form-group">
+                                    <label for="latitude">纬度</label>
+                                    <input type="text" class="form-control" name="latitude" required="required"
+                                           id="latitude"
+                                           placeholder="如：30度84分0秒">
+                                </div>
+                                <input type="hidden" name="view_point_list" value="{{ vp_list }}"/>
+                                <button type="submit"
+                                        class="btn btn-info pull-right">添加零散观察点
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+                <div class="row">
+                    <div id="mapDiv" class="map">
+                        <div id="BasemapToggle"></div>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="aggregation_view" aria-labelledby="profile-tab">
+                <div class="row" style="margin-top: 5px;">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10">
+                        <div id="tbl_geopoint_group"></div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="row">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#add_geopoint_group">创建地理点位集合
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="add_geopoint_group" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">创建地理坐标观察集合</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="group_name" class="col-sm-3 control-label">集合名称</label>
+
+                                    <div class="col-sm-9">
+                                        <input type="email" class="form-control" id="gp_group_name"
+                                               placeholder="地理点位集合的名称">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="desc" class="col-sm-3 control-label">描述</label>
+
+                                    <div class="col-sm-9">
+                                        <textarea rows="5" id="gp_group_desc" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-2"></div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="addGeopointGroup()">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var map, graphiclayer;
+        require([
+            "esri/map",
+            "esri/graphic",
+            "esri/layers/GraphicsLayer",
+            "dojo/domReady!"
+        ], function (Map, Grahpic, GraphicsLayer) {
+            map = new Map("mapDiv", {
+                center: [115.416, 39.433],
+                zoom: 4,
+                basemap: "topo" //"satellite"
+            });
+
+            graphiclayer = new GraphicsLayer();
+            map.addLayer(graphiclayer);
+
+            {% for _node in view_points %}
+                addMarkerRawData(graphiclayer, '{{ _node['longitude'] }}', '{{ _node['latitude'] }}', '{{ _node['name'] }}', '');
+            {% endfor %}
+        });
+
+        $(document).ready(function () {
+            $("#tbl_geopoint_group").load("{{ url_geogroup_tbl }}");
+        })
+
+        /**
+         * 添加观察点
+         */
+        function addGeopointGroup() {
+            var g_name = $.trim($("#gp_group_name").val());
+            var g_desc = $.trim($("#gp_group_desc").val());
+
+            if (("" != g_name) && ("" != g_desc)) {
+                $.post("{{ url_geogroup_tbl }}", {"name": g_name, "desc": g_desc}, function(resp) {
+                    if (0 == resp.code) {
+                        $("#tbl_geopoint_group").load("{{ url_geogroup_tbl }}");
+                        $('#add_geopoint_group').modal('hide');
+                        $("#gp_group_name").val("");
+                        $("#gp_group_desc").val("");
+                    }
+                    else {
+                        alert(resp.msg);
+                    }
+                }, "json");
+            }
+            else {
+                alert("表单填写不完整！")
+            }
+        }
+    </script>
+{% endblock %}

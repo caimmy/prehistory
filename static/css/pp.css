@@ -1,0 +1,15 @@
+
+.a_label {
+    text-decoration: none;
+    color: #ffffff;
+}
+.a_label:hover {
+    text-decoration: none;
+}
+.a_label:visited {
+    text-decoration: none;
+}
+
+.ph_tbl {
+    margin-top: 15px;
+}
