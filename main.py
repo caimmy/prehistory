@@ -157,4 +157,6 @@ def Logout():
     return redirect(url_for("frontpage"))
 
 if "__main__" == __name__:
-    app.run(host='0.0.0.0', port=5000)
+    listen_port = 5000
+    print("listen on port %d" % (listen_port))
+    app.run(host='0.0.0.0', port=listen_port)
