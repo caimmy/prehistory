@@ -19,7 +19,7 @@ else:
         print(str(e))
 
 
-mysql_master_engine = create_engine("mysql://%s:%s@%s:%d/%s?charset=utf8" % \
+mysql_master_engine = create_engine("mysql+pymysql://%s:%s@%s:%d/%s?charset=utf8" % \
                               (MYSQL_USER, MYSQL_PASS, MYSQL_HOST, int(MYSQL_PORT), MYSQL_DB),
                                     pool_size=100, pool_recycle=3600, echo=DEBUG_MODE)
 
