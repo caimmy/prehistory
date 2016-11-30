@@ -26,7 +26,7 @@ mysql_master_engine = create_engine("mysql+pymysql://%s:%s@%s:%d/%s?charset=utf8
 
 db_session = scoped_session(sessionmaker(bind=mysql_master_engine))
 Base = declarative_base()
-
+c
 
 
 class SQLExtHelper:
