@@ -4,7 +4,7 @@ __date__ = '15-5-5'
 
 import os
 
-DEBUG_MODE = not os.environ.has_key("SERVER_SOFTWARE")
+DEBUG_MODE = True
 
 # 是否开启访问日志
 ACCESS_LOG_ON = True

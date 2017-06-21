@@ -3,7 +3,6 @@ __author__ = 'caimiao'
 __date__ = '15-3-30'
 
 
-import sys
 import base64
 
 from flask import Flask, g, render_template, request, redirect, url_for, make_response
