@@ -39,7 +39,7 @@ class BaiduMapApi:
                 i_end = i_pt_count
             # 构造百度地址转换接口的批量请求数据
             raw_data = []
-            for i_q in xrange(i_start, i_end):
+            for i_q in range(i_start, i_end):
                 raw_data.append("%s,%s" % (self.label2geonumber(pt_list[i_q]['longitude']) if MAP_TYPE_GPS_DMS == map_type else pt_list[i_q]['longitude'],
                                            self.label2geonumber(pt_list[i_q]['latitude']) if MAP_TYPE_GPS_DMS == map_type else pt_list[i_q]['latitude']))
             cor_query = ";".join(raw_data)
@@ -50,7 +50,7 @@ class BaiduMapApi:
             conv_response = urllib.urlopen(query_addr)
             conv_result = json.loads(conv_response.read(), 'utf-8')
             if 0 == conv_result['status']:
-                for i_t in xrange(i_start, i_end):
+                for i_t in range(i_start, i_end):
                     pt_list[i_t].setdefault('bm_longitude', str(conv_result['result'][i_t]['x']))
                     pt_list[i_t].setdefault('bm_latitude', str(conv_result['result'][i_t]['y']))
 
