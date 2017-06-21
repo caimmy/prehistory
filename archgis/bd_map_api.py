@@ -2,7 +2,7 @@
 __author__ = 'caimiao'
 __date__ = '15-12-6'
 
-import urllib
+import requests
 import json
 from config import KEY_BAIDU_MAP
 from prehistory_conf import MAP_TYPE_GPS_DMS, MAP_TYPE_GPS_DDD, MAP_TYPE_BAIDU_5
@@ -47,12 +47,13 @@ class BaiduMapApi:
                 query_addr = url_conv_gps2baidu_geo + cor_query
             else:
                 query_addr = url_conv_baidu2gps_geo + cor_query
-            conv_response = urllib.urlopen(query_addr)
-            conv_result = json.loads(conv_response.read(), 'utf-8')
-            if 0 == conv_result['status']:
-                for i_t in range(i_start, i_end):
-                    pt_list[i_t].setdefault('bm_longitude', str(conv_result['result'][i_t]['x']))
-                    pt_list[i_t].setdefault('bm_latitude', str(conv_result['result'][i_t]['y']))
+            conv_response = requests.get(query_addr)
+            if conv_response.ok:
+                conv_result = json.loads(conv_response.text)
+                if 0 == conv_result['status']:
+                    for i_t in range(i_start, i_end):
+                        pt_list[i_t].setdefault('bm_longitude', str(conv_result['result'][i_t]['x']))
+                        pt_list[i_t].setdefault('bm_latitude', str(conv_result['result'][i_t]['y']))
 
         return pt_list
 
