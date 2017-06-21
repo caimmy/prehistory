@@ -3,9 +3,9 @@ __author__ = 'caimiao'
 __date__ = '15-5-5'
 
 import json
-from StringIO import StringIO
+from io import StringIO
 
-from flask import Blueprint, render_template, redirect, url_for, request, make_response
+from flask import Blueprint, render_template, redirect, url_for, make_response
 
 from archaeology.arghlaborary_operation import ArchlaboraryOperation
 from utils.security_helper import UserIdentify

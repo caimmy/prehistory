@@ -3,7 +3,7 @@ __author__ = 'caimiao'
 __date__ = '15-3-30'
 
 from flask import Blueprint, render_template, redirect, url_for, request
-from archgis_lib import SettlementMgr
+from archgis.archgis_lib import SettlementMgr
 from archgis.bd_map_api import BaiduMapApi
 from archgis.archgis_operation import ArchgisOperation
 from utils.tools import getFailureResponse, changeResponseToSuccess, makeResponse

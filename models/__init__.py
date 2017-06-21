@@ -28,7 +28,6 @@ db_session = scoped_session(sessionmaker(bind=mysql_master_engine))
 Base = declarative_base()
 
 
-
 class SQLExtHelper:
     '''
     通过多继承方式使数据表类支持toDict操作
