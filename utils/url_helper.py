@@ -4,6 +4,7 @@ __date__ = '15-6-7'
 
 import base64
 from flask import url_for
+from utils.encode_helper import ensure_bytes
 
 def makeTipsPageUrl(_title, _content, _theme='info', _jumpurl=''):
     """
@@ -15,6 +16,6 @@ def makeTipsPageUrl(_title, _content, _theme='info', _jumpurl=''):
     :param _theme:
     :return:
     """
-    return url_for("TipsPage", title=base64.b64encode(_title),
-                   content=base64.b64encode(_content),
+    return url_for("TipsPage", title=base64.b64encode(ensure_bytes(_title)),
+                   content=base64.b64encode(ensure_bytes(_content)),
                    theme=_theme, jumpUrl=_jumpurl)
