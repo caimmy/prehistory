@@ -15,7 +15,7 @@ if DEBUG_MODE:
 else:
     try:
         from sae.const import (MYSQL_DB, MYSQL_HOST, MYSQL_PASS, MYSQL_USER, MYSQL_PORT)
-    except Exception, e:
+    except Exception as e:
         print(str(e))
 
 

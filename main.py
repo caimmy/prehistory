@@ -4,9 +4,6 @@ __date__ = '15-3-30'
 
 
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
 import base64
 
 from flask import Flask, g, render_template, request, redirect, url_for, make_response
@@ -54,7 +51,7 @@ def before_request():
             access_log.email = 'anonymous' if user_identify.is_Guest() else user_identify.email
             db_session.add(access_log)
             db_session.commit()
-        except Exception, e:
+        except Exception as e:
             db_session.rollback()
 
 @app.teardown_request
@@ -69,7 +66,7 @@ def tear_down(exception):
 
 @app.route("/pagetest")
 def Pagetest():
-    from StringIO import StringIO
+    from io import StringIO
     import numpy as np
     from matplotlib import pyplot as plt
     fig = plt.figure()
@@ -88,7 +85,7 @@ def pagetest2():
     from matplotlib import pyplot as plt
     from pandas import Series, DataFrame
     import pandas as pd
-    from StringIO import StringIO
+    from io import StringIO
 
     df = DataFrame(np.random.rand(6,4), index=["One", "Two", "Three", "Four", "Five", "Six"], columns=pd.Index(["A", "B", "C", "D"], name="Genus"))
     buf = StringIO()

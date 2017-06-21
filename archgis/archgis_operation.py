@@ -57,7 +57,7 @@ class ArchgisOperation(BaseOperations):
                     geo_group.u_id = current_user.uid
                     db_session.add(geo_group)
                     self.changeResponse2Success()
-                except Exception, e:
+                except Exception as e:
                     self.setFailureReason(str(e))
             else:
                 self.setFailureReason("命名冲突，同名记录已经存在！")
@@ -100,7 +100,7 @@ class ArchgisOperation(BaseOperations):
                             db_session.delete(geo_group_info)
                             db_session.commit()
                             self.changeResponse2Success()
-                        except Exception, e:
+                        except Exception as e:
                             self.setFailureReason(str(e), redirect_url=url_for(".ViewGeoGroup", gid=gid))
                     else:
                         self.setFailureReason("该地理坐标点位集合不属于您，无法执行删除操作！", redirect_url=url_for(".ViewGeoGroup", gid=gid))
@@ -194,7 +194,7 @@ class ArchgisOperation(BaseOperations):
                 db_session.add(geo_unit)
                 db_session.commit()
                 self.changeResponse2Success()
-            except Exception, e:
+            except Exception as e:
                 db_session.rollback()
                 self.setFailureReason(str(e))
 
@@ -228,7 +228,7 @@ class ArchgisOperation(BaseOperations):
                 db_session.add(geo_unit)
                 db_session.commit()
                 self.changeResponse2Success()
-            except Exception, e:
+            except Exception as e:
                 db_session.rollback()
                 self.setFailureReason(str(e))
 
@@ -246,7 +246,7 @@ class ArchgisOperation(BaseOperations):
                     db_session.delete(geo_unit)
                     db_session.commit()
                     self.changeResponse2Success()
-                except Exception, e:
+                except Exception as e:
                     db_session.rollback()
                     self.setFailureReason(str(e))
             else:
