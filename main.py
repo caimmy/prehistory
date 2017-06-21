@@ -16,6 +16,7 @@ from visual import visual_app
 from archaeology.userinfo_operation import UserinfoOperations
 from utils.url_helper import makeTipsPageUrl
 from utils.security_helper import UserIdentify
+from utils.encode_helper import ensure_string
 from config import DEBUG_MODE, ACCESS_LOG_ON
 
 
@@ -119,8 +120,8 @@ def TipsPage():
     _theme = request.args.get("theme", "info")
     _jumpurl = request.args.get('jumpUrl', '')
     return render_template("gen/_tips.html", current_user=UserIdentify.getCurrentUser(),
-                           title=base64.b64decode(_title),
-                           content=base64.b64decode(_content),
+                           title=ensure_string(base64.b64decode(_title)),
+                           content=ensure_string(base64.b64decode(_content)),
                            theme=_theme, jumpUrl=_jumpurl)
 
 @app.route("/register", methods=["GET", "POST"])
