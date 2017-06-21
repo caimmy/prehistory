@@ -51,3 +51,23 @@ def makeResponse(ret_info):
         return json.dumps(ret_info)
     else:
         return json.dump(ret_info)
+
+def ensure_string(s):
+    """
+    确保数据是字符串
+    :param s:
+    :return:
+    """
+    if isinstance(s, bytes):
+        return s.decode('utf-8')
+    return str(s)
+
+def ensure_bytes(s):
+    """
+    确保数据是字节
+    :param s:
+    :return:
+    """
+    if isinstance(s, str):
+        return s.encode('utf-8')
+    return s
