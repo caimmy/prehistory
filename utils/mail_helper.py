@@ -67,7 +67,7 @@ class SMTPMailSender(MailBase):
             msg['To'] = recvers
             smtp_server.sendmail(self.sender, recvers, msg.as_string())
             ret_oper = True
-        except Exception, e:
+        except Exception as e:
             pass
         finally:
             try:
@@ -78,7 +78,7 @@ class SMTPMailSender(MailBase):
                 mail_log.status = EmailLog.STATUS_SEND_SUCCESS if ret_oper else EmailLog.STATUS_SEND_FAILURE
                 db_session.add(mail_log)
                 db_session.commit()
-            except Exception, e:
+            except Exception as e:
                 db_session.rollback()
             smtp_server.quit()
 

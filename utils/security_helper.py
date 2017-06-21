@@ -37,7 +37,7 @@ class UserIdentify:
             session['nickname'] = nickname
             self.uid = uid
             ret_check = True
-        except Exception, e:
+        except Exception as e:
             pass
         return ret_check
 
@@ -53,7 +53,7 @@ class UserIdentify:
             session.pop('nickname', None)
             self.uid = None
             ret_check = True
-        except Exception, e:
+        except Exception as e:
             pass
         return ret_check
 

@@ -35,7 +35,7 @@ class ArchlaboraryOperation(BaseOperations):
                     db_session.add(new_laborary)
                     db_session.commit()
                     self.changeResponse2Success()
-                except Exception, e:
+                except Exception as e:
                     db_session.rollback()
                     self.setFailureReason(str(e))
             else:
@@ -89,7 +89,7 @@ class ArchlaboraryOperation(BaseOperations):
                     db_session.add(new_project)
                     db_session.commit()
                     self.changeResponse2Success()
-                except Exception, e:
+                except Exception as e:
                     db_session.rollback()
                     self.setFailureReason(str(e))
             else:
@@ -135,7 +135,7 @@ class ArchlaboraryOperation(BaseOperations):
                     db_session.add(project_property)
                     db_session.commit()
                     self.changeResponse2Success()
-                except Exception, e:
+                except Exception as e:
                     db_session.rollback()
                     self.setFailureReason(str(e))
             else:
@@ -189,7 +189,7 @@ class ArchlaboraryOperation(BaseOperations):
                     db_session.delete(_del_property)
                     db_session.commit()
                     self.changeResponse2Success()
-            except Exception, e:
+            except Exception as e:
                 db_session.rollback()
                 self.setFailureReason(str(e))
 
@@ -262,7 +262,7 @@ class ArchlaboraryOperation(BaseOperations):
                     db_session.add(po)
                     db_session.commit()
                     self.changeResponse2Success()
-                except Exception, e:
+                except Exception as e:
                     db_session.rollback()
                     self.setFailureReason(str(e))
             else:
@@ -293,7 +293,7 @@ class ArchlaboraryOperation(BaseOperations):
         if "pid" in _data_dict:
             try:
                 project_id = int(_data_dict.get('pid'))
-            except Exception, e:
+            except Exception as e:
                 project_id = 0
             if project_id > 0:
                 row_num = str(uuid1())
@@ -313,7 +313,7 @@ class ArchlaboraryOperation(BaseOperations):
                                 db_session.add(p_item)
                     db_session.commit()
                     self.changeResponse2Success()
-                except Exception, e:
+                except Exception as e:
                     db_session.rollback()
                     self.setFailureReason(str(e))
 
@@ -328,7 +328,7 @@ class ArchlaboraryOperation(BaseOperations):
                 db_session.query(ProjectItem).filter(ProjectItem.proj_id==pid).filter(ProjectItem.row_id==row_id).delete()
                 db_session.commit()
                 self.changeResponse2Success()
-            except Exception, e:
+            except Exception as e:
                 db_session.rollback()
 
 
@@ -360,7 +360,7 @@ class ArchlaboraryOperation(BaseOperations):
                                 db_session.add(p_item)
                     db_session.commit()
                     self.changeResponse2Success()
-                except Exception, e:
+                except Exception as e:
                     db_session.rollback()
                     self.setFailureReason(str(e))
         else:

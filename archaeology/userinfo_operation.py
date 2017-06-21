@@ -39,7 +39,7 @@ class UserinfoOperations(BaseOperations):
                     _mail_content = render_template("noticer/email/_register.html", nickname=name)
                     mailer.setContent(_mail_content)
                     mailer.send()
-                except Exception, e:
+                except Exception as e:
                     db_session.rollback()
                     self.setFailureReason(str(e))
             else:
