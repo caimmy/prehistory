@@ -6,7 +6,7 @@ from uuid import uuid1
 
 from sqlalchemy import or_
 
-from utils import BaseOperations
+from utils.http_helper import BaseOperations
 from utils.security_helper import UserIdentify
 from models import db_session
 from models.trunck import Laborary, Project, ProjectProperty, PropertyOptions, ProjectItem
