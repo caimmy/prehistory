@@ -37,5 +37,5 @@ class SQLExtHelper:
         for _k in self.__mapper__.c.keys():
             _v = getattr(self, _k)
             if _v is None: _v = ''
-            attributes[_k] = _v if type(_v) in [int, float, long] else str(_v)
+            attributes[_k] = _v if type(_v) in [int, float] else str(_v)
         return attributes
