@@ -7,7 +7,7 @@ import hashlib, random
 from sqlalchemy import Column, Integer, String, DateTime, Enum, CHAR, Text
 from datetime import datetime
 from models import Base, SQLExtHelper, db_session
-from utils.tools import ensure_bytes
+from utils.encode_helper import ensure_bytes
 
 from prehistory_conf import MAP_TYPE_GPS_DMS
 
@@ -87,7 +87,7 @@ class User(Base):
         :return string
         """
         md5_obj = hashlib.md5()
-        md5_obj.update(ensure_bytes("%s%s" % (pwd, salt)))
+        md5_obj.update("%s%s" % (pwd, salt))
         return md5_obj.hexdigest()
 
     def checkPassword(self, chk_pwd):
@@ -97,7 +97,7 @@ class User(Base):
         :return bool
         """
         md5_obj = hashlib.md5()
-        md5_obj.update("%s%s" % (chk_pwd, self.salt))
+        md5_obj.update(ensure_bytes("%s%s" % (chk_pwd, self.salt)))
         _check_value = md5_obj.hexdigest()
         return str(_check_value).lower() == str(self.pwd).lower()
 

@@ -7,7 +7,7 @@ __date__ = '15-6-13'
 """
 
 from flask import request, render_template
-from utils import BaseOperations
+from utils.http_helper import BaseOperations
 from models import db_session
 from models.trunck import User
 from utils.mail_helper import getMailSender

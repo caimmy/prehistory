@@ -3,7 +3,7 @@ __author__ = 'caimiao'
 __date__ = '15-6-14'
 
 from flask import url_for
-from utils import BaseOperations
+from utils.http_helper import BaseOperations
 from models import db_session
 from models.trunck import GeoPointGroup, GeoPointUnit
 from utils.security_helper import UserIdentify
