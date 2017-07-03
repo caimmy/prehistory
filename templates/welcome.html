@@ -60,10 +60,8 @@
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">首页</a></li>
                         <li><a href="mailto:caimmy@qq.com">联系</a></li>
-                        {% if not current_user['is_guest'] %}
-                            <li><a href="{{ url_arch_gis }}">位置观察</a></li>
-                            <li><a href="{{ url_arch_laborary }}">定量实验室</a></li>
-                        {% endif %}
+                        <li><a href="{{ url_arch_gis }}">位置观察</a></li>
+                        <li><a href="{{ url_arch_laborary }}">定量实验室</a></li>
                     </ul>
                     {% if current_user['is_guest'] %}
                         <form class="navbar-form navbar-right" method="POST" action="/login">
@@ -88,6 +86,7 @@
                                     <li><a href="#">交流</a></li>
                                     <li><a href="#">备注</a></li>
                                     <li><a href="#">工作日历</a></li>
+                                    <li><a href="{{ url_for('admin.ArticleNew') }}">杂言</a></li>
                                     <li class="divider"></li>
                                     <li class="dropdown-header">个人账户</li>
                                     <li><a href="#">设置</a></li>

@@ -46,8 +46,7 @@ class ArchlaboraryOperation(BaseOperations):
         查询所属的定量实验室列表
         :return: List
         """
-        current_user = UserIdentify()
-        laborary_records = db_session.query(Laborary).filter(Laborary.u_id==current_user.uid).all()
+        laborary_records = db_session.query(Laborary).all()
         laborary_list = []
         for _rcd in laborary_records:
             laborary_list.append(_rcd.toDict())

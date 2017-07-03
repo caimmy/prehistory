@@ -144,8 +144,7 @@ class ArchgisOperation(BaseOperations):
         查询所有的地理坐标集合记录
         :return:
         """
-        current_user = UserIdentify()
-        return db_session.query(GeoPointGroup).filter(GeoPointGroup.u_id==current_user.uid).all()
+        return db_session.query(GeoPointGroup).all()
 
     def handleVeiwQueryGeoPointGroup(self):
         """
