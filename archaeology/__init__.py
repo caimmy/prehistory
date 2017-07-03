@@ -16,7 +16,6 @@ archaeology_app = Blueprint("archaeology", __name__, template_folder="templates"
 
 
 @archaeology_app.route('/')
-@login_required
 def Index():
     laborary_operation = ArchlaboraryOperation()
     return render_template("archaeology/_index.html",
@@ -41,7 +40,6 @@ def CreateLaborary():
         return laborary_operation.jumpErrorRedirect("错误", url_for(".Index"))
 
 @archaeology_app.route("/view_lab", methods=["GET"])
-@login_required
 def ViewLaborary():
     """
     查看定量实验室信息
@@ -81,7 +79,6 @@ def CreateProject():
 
 
 @archaeology_app.route("/view_project", methods=["GET"])
-@login_required
 def ViewProject():
     """
     显示定量实验项目
@@ -141,7 +138,6 @@ def AjaxLoadPropertyItem():
 
 
 @archaeology_app.route("/ajax_loadpropertytbl", methods=["POST"])
-@login_required
 def AjaxLoadPropertyTableForProject():
     """
     加载研究项目属性表格
@@ -174,7 +170,6 @@ def AjaxDeletePropertyForProject():
 
 
 @archaeology_app.route("/ajax_loaddatatbl", methods=["POST"])
-@login_required
 def AjaxLoadProjectDataTable():
     """
     获取研究项目数据表格

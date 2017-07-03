@@ -16,7 +16,6 @@ from prehistory_conf import MAP_TYPE_GPS_DMS, MAP_TYPE_GPS_DDD, MAP_TYPE_BAIDU_5
 archgis_app = Blueprint('archgis', __name__, template_folder='templates')
 
 @archgis_app.route("/", methods=["GET", "POST"])
-@login_required
 def Index():
     if "GET" == request.method:
         return render_template("archgis/_index.html",
@@ -34,7 +33,6 @@ def Index():
             return archgis_operation.jumpErrorRedirect()
 
 @archgis_app.route("/query_geopoint_group", methods=["GET", "POST"])
-@login_required
 def QueryGeopointGroup():
     archgis_operation = ArchgisOperation()
     if "GET" == request.method:
@@ -43,12 +41,15 @@ def QueryGeopointGroup():
                                geo_pt_group=geo_point_group,
                                url_view_group_detail=url_for(".ViewGeoGroup"))
     else:
-        archgis_operation.handleAddGeopointGroup()
-        _, response = archgis_operation.getResponse()
+        if not UserIdentify().is_Guest():
+            archgis_operation.handleAddGeopointGroup()
+            _, response = archgis_operation.getResponse()
+        else:
+            response = getFailureResponse()
+            response['msg'] = '用户需要登录'
         return ArchgisOperation.jsonEncode(response)
 
 @archgis_app.route("/view_geopoint_group", methods=["GET"])
-@login_required
 def ViewGeoGroup():
     """
     展示地理坐标集合页面
@@ -77,7 +78,6 @@ def ViewGeoGroup():
         return archgis_operation.jumpErrorRedirect("错误", jumpurl=url_for(".Index"))
 
 @archgis_app.route("/watch_baidugeogrp", methods=["GET", "POST"])
-@login_required
 def WatchGeoGroupInBaiduMap():
     """
     在百度地图系统中观察地理点位集合
@@ -106,7 +106,6 @@ def WatchGeoGroupInBaiduMap():
                                    view_pts_baidu5=_view_pts_baidu5)
 
 @archgis_app.route("/watch_geogrp", methods=["GET", "POST"])
-@login_required
 def WatchGeoGroupInArchGisMap():
     """
     在ArchGis地图中观察地理点位集合

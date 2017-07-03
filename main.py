@@ -13,6 +13,8 @@ from models.trunck import AccessLog
 from archgis import archgis_app
 from archaeology import archaeology_app
 from visual import visual_app
+from admin import admin_app
+from admin.article_entry import *
 from archaeology.userinfo_operation import UserinfoOperations
 from utils.url_helper import makeTipsPageUrl
 from utils.security_helper import UserIdentify
@@ -27,6 +29,7 @@ app.secret_key = '\xac\xe7\x03f\x04n<\xdc\xb0\x82\xf4\xde\xc8\x7f\xefE\xd4=E`0S\
 app.register_blueprint(archgis_app, url_prefix='/gis')
 app.register_blueprint(archaeology_app, url_prefix='/arch')
 app.register_blueprint(visual_app, url_prefix='/visual')
+app.register_blueprint(admin_app, url_prefix='/admin')
 
 @app.route('/')
 def frontpage():
