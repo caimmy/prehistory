@@ -8,16 +8,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-
-if DEBUG_MODE:
-    from config import _MYSQL_DB_DEBUG as MYSQL_DB, _MYSQL_HOST_DEBUG as MYSQL_HOST, _MYSQL_PWD_DEBUG as MYSQL_PASS, \
-        _MYSQL_USER_DEBUG as MYSQL_USER, _MYSQL_PORT_DEBUG as MYSQL_PORT
-else:
-    try:
-        from sae.const import (MYSQL_DB, MYSQL_HOST, MYSQL_PASS, MYSQL_USER, MYSQL_PORT)
-    except Exception as e:
-        print(str(e))
-
+from config import _MYSQL_DB_DEBUG as MYSQL_DB, _MYSQL_HOST_DEBUG as MYSQL_HOST, _MYSQL_PWD_DEBUG as MYSQL_PASS, \
+    _MYSQL_USER_DEBUG as MYSQL_USER, _MYSQL_PORT_DEBUG as MYSQL_PORT
 
 mysql_master_engine = create_engine("mysql+pymysql://%s:%s@%s:%d/%s?charset=utf8" % \
                               (MYSQL_USER, MYSQL_PASS, MYSQL_HOST, int(MYSQL_PORT), MYSQL_DB),
