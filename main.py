@@ -159,4 +159,4 @@ def Logout():
 if "__main__" == __name__:
     listen_port = 5000
     print("listen on port %d" % (listen_port))
-    app.run(host='0.0.0.0', port=listen_port)
+    app.run(port=listen_port)
