@@ -74,5 +74,5 @@ class BaiduMapApi:
         if 2 == len(dict_chk):
             m = int(dict_chk[0])
         if None in [d,f,m]:
-            raise "坐标转换失败，存在错误的坐标定义！"
+            raise ValueError("坐标转换失败，存在错误的坐标定义！")
         return d + f / 60.0 + m / 3600.0
