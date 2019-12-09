@@ -15,14 +15,14 @@ KEY_BAIDU_MAP = '5ee4aa34d7e4d3254c5458bb2225f806'
 # 主数据库配置
 _MYSQL_HOST_DEBUG = '127.0.0.1'
 _MYSQL_PORT_DEBUG = 3306
-_MYSQL_DB_DEBUG = ''
-_MYSQL_USER_DEBUG = ''
-_MYSQL_PWD_DEBUG = ''
+_MYSQL_DB_DEBUG = 'prehistory'
+_MYSQL_USER_DEBUG = 'arch'
+_MYSQL_PWD_DEBUG = 'GmPre_19_12_05'
 
 
 
-SMTP_HOST = ''
+SMTP_HOST = 'smtp.sina.com'
 SMTP_PORT = 25
-MAIL_USER = ''
-MAIL_SENDER = ''
-MAIL_PWD = ''
+MAIL_USER = 'taoism_drawlot'
+MAIL_SENDER = 'taoism_drawlot@sina.com'
+MAIL_PWD = '12345678'
