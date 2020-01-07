@@ -2,7 +2,7 @@
 __author__ = 'caimiao'
 __date__ = '15-5-5'
 
-import hashlib, random
+import hashlib, random, pyotp, time
 
 from sqlalchemy import Column, Integer, String, DateTime, Enum, CHAR, Text
 from datetime import datetime
@@ -59,6 +59,7 @@ class User(Base):
     email = Column(String(128), nullable=False)
     pwd = Column(String(32))
     salt = Column(String(32))
+    otpkey = Column(String(32))
     reg_ip = Column(String(128), default='')
     reg_tm = Column(DateTime, default=datetime.now())
     avatar = Column(String(256))
@@ -89,6 +90,21 @@ class User(Base):
         md5_obj = hashlib.md5()
         md5_obj.update("%s%s" % (pwd, salt))
         return md5_obj.hexdigest()
+
+    def checkTOTP(self, code):
+        """
+        通过totp校验检查用户是否有权登录系统
+        :return bool
+        """
+        ret_check = False
+        if self.otpkey and len(self.otpkey) > 0:
+            otpChecker = pyotp.TOTP(self.otpkey)
+            now_tm = int(time.time())
+            for _chk_code in (now_tm - 30, now_tm, now_tm + 30):
+                if otpChecker.verify(code, _chk_code):
+                    ret_check = True
+                    break
+        return ret_check
 
     def checkPassword(self, chk_pwd):
         """

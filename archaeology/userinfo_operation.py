@@ -21,6 +21,7 @@ class UserinfoOperations(BaseOperations):
         """
         name, email, pwd = self.postParams('name', 'email', 'pwd')
         if self.checkParamsAvailable(email, pwd):
+            """
             exists_query = db_session.query(User).filter(User.email==email).exists()
             if not db_session.query(exists_query).scalar():
                 try:
@@ -44,7 +45,8 @@ class UserinfoOperations(BaseOperations):
                     self.setFailureReason(str(e))
             else:
                 self.setFailureReason("该邮箱已经被注册，请更换邮箱申请或尝试找回密码！")
-
+            """
+            self.setFailureReason("该邮箱已经被注册，请更换邮箱申请或尝试找回密码！")
 
     def handleLogin(self):
         """
@@ -55,7 +57,7 @@ class UserinfoOperations(BaseOperations):
         if self.checkParamsAvailable(email, pwd):
             user_info = db_session.query(User).filter(User.email==email).first()
             if user_info is not None:
-                if user_info.checkPassword(pwd):
+                if user_info.checkTOTP(pwd):
                     user_identify = UserIdentify()
                     user_identify.user_login(user_info.id, user_info.email, user_info.name)
                     if not user_identify.is_Guest():
