@@ -21,6 +21,7 @@ from utils.validators import genFailureResponse, checkResponseSuccessful
 from utils.url_helper import makeTipsPageUrl
 from utils.security_helper import UserIdentify
 
+
 class BaseOperations:
     SUCCESS_RESPONSE_CODE = 0
 
@@ -196,3 +197,16 @@ class BaseOperations:
         :return:
         """
         return json.dumps(data)
+
+
+
+def JointResponseParams(*args, **kwargs):
+    """
+    整合输出参数
+    :param args: 
+    :param kwargs: 
+    :return: 
+    """
+    _dict = {"current_user": UserIdentify.getCurrentUser()}
+    _dict.update(kwargs)
+    return _dict

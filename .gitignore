@@ -4,3 +4,10 @@
 *.pyc
 .vscode
 __pycache__
+
+
+# application
+ai/models/*
+
+books/
+data/books/*

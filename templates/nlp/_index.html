@@ -1,0 +1,40 @@
+{% extends "/layout/_mbase.html" %}
+{% block title %}文献NLP{% endblock %}
+{% block ext_header %}
+    <script type="text/javascript" src="/static/js/tools/archgis_tool.js"></script>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.13/esri/css/esri.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.13/dijit/themes/claro/claro.css">
+    <script src="https://js.arcgis.com/3.13/"></script>
+{% endblock %}
+{% block cur_nav_func %}文献NLP{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>文献分析
+                <small>基于《二十四史》</small>
+            </h1>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img src="..." alt="...">
+                    <div class="caption">
+                        <h3>词向量</h3>
+                        <p>...</p>
+                        <p><a href="{{ url_for('articlenlp.Word2vecIndexAction') }}" class="btn btn-primary" role="button">进入</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img src="..." alt="...">
+                    <div class="caption">
+                        <h3>知识图谱</h3>
+                        <p>...</p>
+                        <p><a href="{{ url_for('articlenlp.KnowledgegraphBackendAction') }}" class="btn btn-primary" role="button">进入</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

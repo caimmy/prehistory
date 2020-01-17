@@ -328,3 +328,46 @@ class ProjectItem(Base):
 
     def __repr__(self):
         return "<<ProjectItem> label: %s, proj_id: %d, p_id: %d, value: %s>" % (self.label, self.proj_id, self.p_id, self.value)
+
+
+###################################################################
+#  人工智能辅助工具表
+###################################################################
+
+class OpsKnowledgeDiscovery(Base):
+    """
+    知识关系发现
+    """
+    __tablename__ = "ops_konwledge_discovery"
+
+    id          = Column(Integer, primary_key=True, autoincrement=True)
+    sentence    = Column(String(512), nullable=False, comment="原始语句")
+    sentity     = Column(String(128), nullable=False, comment="起始实体")
+    eentity     = Column(String(128), nullable=False, comment="结束实体")
+    rel         = Column(String(128), nullable=False, comment="关系")
+    create_tm   = Column(DateTime, default=datetime.now, comment="标记时间")
+    flag        = Column(Enum('0', '1', name="e_kn_flag"), default='0', comment='是否提交进入图谱数据库')
+
+
+
+    @staticmethod
+    def addItem(db, sentence, s, r, e, unique=True):
+        ret_oper = False
+        if unique and db.query(db.query(OpsKnowledgeDiscovery).filter(OpsKnowledgeDiscovery.sentity==s).filter(OpsKnowledgeDiscovery.rel==r)
+            .filter(OpsKnowledgeDiscovery.eentity==e).exists()).scalar():
+            ret_oper = True
+        else:
+            try:
+                item = OpsKnowledgeDiscovery()
+                item.sentence = sentence
+                item.sentity = s
+                item.rel = r
+                item.eentity = e
+                db.add(item)
+                db.commit()
+                ret_oper = True
+            except Exception as e:
+                print(e)
+                ret_oper = False
+        return ret_oper
+

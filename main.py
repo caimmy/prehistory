@@ -5,7 +5,7 @@ __date__ = '15-3-30'
 
 import base64
 
-from flask import Flask, g, render_template, request, redirect, url_for, make_response
+from flask import Flask, g, render_template, request, redirect, url_for, make_response, current_app
 
 from models import db_session
 from models.trunck import AccessLog
@@ -15,11 +15,15 @@ from archaeology import archaeology_app
 from visual import visual_app
 from admin import admin_app
 from admin.article_entry import *
+from articlenlp import nlp_app
 from archaeology.userinfo_operation import UserinfoOperations
 from utils.url_helper import makeTipsPageUrl
 from utils.security_helper import UserIdentify
 from utils.encode_helper import ensure_string
+from utils.apptools import application_path
 from config import DEBUG_MODE, ACCESS_LOG_ON
+
+from gensim.models import Word2Vec
 
 
 app = Flask(__name__)
@@ -30,13 +34,21 @@ app.register_blueprint(archgis_app, url_prefix='/gis')
 app.register_blueprint(archaeology_app, url_prefix='/arch')
 app.register_blueprint(visual_app, url_prefix='/visual')
 app.register_blueprint(admin_app, url_prefix='/admin')
+app.register_blueprint(nlp_app, url_prefix='/nlp')
+app.word2vecmodel = {
+    "三国志": Word2Vec.load(application_path("ai", "models", "wordvector", "三国志.model")),
+    "汉书": Word2Vec.load(application_path("ai", "models", "wordvector", "汉书.model")),
+    "明史": Word2Vec.load(application_path("ai", "models", "wordvector", "明史.model")),
+}
 
 @app.route('/')
 def frontpage():
     return render_template("welcome.html",
                            current_user=UserIdentify.getCurrentUser(),
                            url_arch_laborary=url_for("archaeology.Index"),
-                           url_arch_gis=url_for("archgis.Index"))
+                           url_arch_gis=url_for("archgis.Index"),
+                           url_arch_nlp=url_for("articlenlp.IndexAction")
+                           )
 
 @app.errorhandler(404)
 def test_404(error):
@@ -45,6 +57,7 @@ def test_404(error):
 
 @app.before_request
 def before_request():
+    g.db = db_session
     if ACCESS_LOG_ON:
         user_identify = UserIdentify()
         try:
@@ -59,6 +72,8 @@ def before_request():
 
 @app.teardown_request
 def tear_down(exception):
+    if hasattr(g, "db"):
+        g.db.close()
     pass
 
 '''
