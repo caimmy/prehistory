@@ -20,10 +20,8 @@ from archaeology.userinfo_operation import UserinfoOperations
 from utils.url_helper import makeTipsPageUrl
 from utils.security_helper import UserIdentify
 from utils.encode_helper import ensure_string
-from utils.apptools import application_path
+from utils.apptools import loadAllWord2vecModels
 from config import DEBUG_MODE, ACCESS_LOG_ON
-
-from gensim.models import Word2Vec
 
 
 app = Flask(__name__)
@@ -35,11 +33,7 @@ app.register_blueprint(archaeology_app, url_prefix='/arch')
 app.register_blueprint(visual_app, url_prefix='/visual')
 app.register_blueprint(admin_app, url_prefix='/admin')
 app.register_blueprint(nlp_app, url_prefix='/nlp')
-app.word2vecmodel = {
-    "三国志": Word2Vec.load(application_path("ai", "models", "wordvector", "三国志.model")),
-    "汉书": Word2Vec.load(application_path("ai", "models", "wordvector", "汉书.model")),
-    "明史": Word2Vec.load(application_path("ai", "models", "wordvector", "明史.model")),
-}
+app.word2vecmodel = loadAllWord2vecModels()
 
 @app.route('/')
 def frontpage():

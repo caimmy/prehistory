@@ -345,13 +345,14 @@ class OpsKnowledgeDiscovery(Base):
     sentity     = Column(String(128), nullable=False, comment="起始实体")
     eentity     = Column(String(128), nullable=False, comment="结束实体")
     rel         = Column(String(128), nullable=False, comment="关系")
+    book        = Column(String(30), default='', comment="书名")
     create_tm   = Column(DateTime, default=datetime.now, comment="标记时间")
     flag        = Column(Enum('0', '1', name="e_kn_flag"), default='0', comment='是否提交进入图谱数据库')
 
 
 
     @staticmethod
-    def addItem(db, sentence, s, r, e, unique=True):
+    def addItem(db, sentence, s, r, e, book, unique=True):
         ret_oper = False
         if unique and db.query(db.query(OpsKnowledgeDiscovery).filter(OpsKnowledgeDiscovery.sentity==s).filter(OpsKnowledgeDiscovery.rel==r)
             .filter(OpsKnowledgeDiscovery.eentity==e).exists()).scalar():
@@ -362,6 +363,7 @@ class OpsKnowledgeDiscovery(Base):
                 item.sentence = sentence
                 item.sentity = s
                 item.rel = r
+                item.book = book
                 item.eentity = e
                 db.add(item)
                 db.commit()

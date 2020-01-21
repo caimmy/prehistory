@@ -67,7 +67,7 @@ def train_word2vector(src_words_file, modelname):
     else:
         print("model train miss!")
 
-def train_knowledgegraph(src):
+def train_knowledgegraph(src, bookname):
     with codecs.open(src, "r", encoding="utf-8") as f:
         try:
             raw_content = f.readlines()
@@ -80,7 +80,7 @@ def train_knowledgegraph(src):
                 if 0 < len(kn_res):
                     for kn_item in kn_res:
                         if 3 == len(kn_item):
-                            OpsKnowledgeDiscovery.addItem(db_session, rs, kn_item[0], kn_item[1], kn_item[2])
+                            OpsKnowledgeDiscovery.addItem(db_session, rs, kn_item[0], kn_item[1], kn_item[2], bookname)
                     print(rs)
                     print(kn_res)
                     print("--------------------------------")
@@ -95,10 +95,10 @@ if "__main__" == __name__:
     # read_book_2_words_file(application_path("data", "books", "二十四史全译", "二十四史全译02 汉书.txt"),
     #                        application_path("data", "books", "二十四史全译", "二十四史全译02汉书keywords.txt"))
 
-    material_name = application_path("data", "books", "二十四史全译", "二十四史全译24_明史.txt")
-    train_word2vector(material_name, "明史")
+    material_name = application_path("data", "books", "二十四史全译", "二十四史全译01 史记.txt")
+    train_word2vector(material_name, "史记")
     # for knowledge test
-    train_knowledgegraph(material_name)
+    train_knowledgegraph(material_name, "史记")
 
 
     # for most similar in word2vec model test

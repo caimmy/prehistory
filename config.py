@@ -19,7 +19,9 @@ _MYSQL_DB_DEBUG = 'prehistory'
 _MYSQL_USER_DEBUG = 'arch'
 _MYSQL_PWD_DEBUG = 'abcd1234'
 
-
+# 图数据库配置
+_NEO4J_HOST = 'bolt://www.prehistory.cn:7687'
+_NEO4J_PASS = 'abcd1234'
 
 SMTP_HOST = 'smtp.sina.com'
 SMTP_PORT = 25

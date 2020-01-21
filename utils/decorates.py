@@ -18,3 +18,14 @@ def login_required(f):
             return redirect(makeTipsPageUrl('禁止访问', '该地址需要登录用户才能访问，请登录您的帐号后重新尝试！', 'danger', url_for('frontpage')))
         return f(*args, **kwargs)
     return decorated_function
+
+
+def Singleton(cls):
+    instance = {}
+    @wraps(cls)
+    def getinstance(*args, **kwargs):
+        if cls not in instance:
+            instance[cls] = cls(*args, **kwargs)
+        return instance[cls]
+
+    return getinstance

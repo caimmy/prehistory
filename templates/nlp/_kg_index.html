@@ -4,7 +4,133 @@
 {% endblock %}
 {% block cur_nav_func %}文献NLP{% endblock %}
 {% block content %}
-<div class="container">
+    <div class="container">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+            <tr>
+                <th>开始实体</th>
+                <th>关系</th>
+                <th>结束实体</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in results %}
+                <tr>
+                    <td>{{ item["sentity"] }}</td>
+                    <td title="{{ item["sentence"] }}">{{ item["rel"] }}</td>
+                    <td>{{ item["eentity"] }}</td>
+                    <td>
+                        <button id="btn_oper_{{ item['id']}}" type="button" class="btn btn-primary"
+                                onclick="show_knnode({{ item['id'] }}, '{{ item['sentity'] }}', '{{ item['rel'] }}', '{{ item['eentity'] }}', '{{ item['sentence'] }}')">
+                            处理
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% for _p in range(totalpage) %}
+                    <li>
+                        <a href="{{ url_for('articlenlp.KnowledgegraphBackendAction') }}?page={{ _p + 1 }}">{{ _p + 1 }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
 
-</div>
+    </div>
+    <div id="knnode" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">知识关系编辑</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="knsentity" class="control-label">起始实体</label>
+                            <input class="form-control" name="knsentity" id="knsentity" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="knrel" class="control-label">关系</label>
+                            <input class="form-control" name="knrel" id="knrel" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="kneentity" class="control-label">结束实体</label>
+                            <input class="form-control" name="kneentity" id="kneentity" value="">
+                        </div>
+                    </form>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">原文</div>
+                        <div id="nkorigin" class="panel-body"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal" onclick="tagdelete()">完成标记</button>
+                    <button type="button" class="btn btn-primary" onclick="taggingkn()">标记知识图谱</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <script type="text/javascript">
+        var knid = 0;
+        var knsentity = "";
+        var knrel = "";
+        var kneentity = "";
+
+        function show_knnode(id, sentity, rel, eentity, sentence) {
+            knid = id;
+            knsentity = sentity;
+            knrel = rel;
+            kneentity = eentity;
+            $("#knsentity").val(knsentity);
+            $("#knrel").val(knrel);
+            $("#kneentity").val(kneentity);
+            $("#nkorigin").html(sentence);
+
+            $("#knnode").modal({
+                backdrop: true,
+                keyboard: true,
+                show: true
+            })
+        }
+
+        function taggingkn() {
+            $.post("{{ url_for('articlenlp.KnowledgegraphBackendAction') }}",  {
+                sentity: $("#knsentity").val(),
+                rel: $("#knrel").val(),
+                eentity: $("#kneentity").val()
+            }, function (resp) {
+                if (resp.success) {
+                    Messenger().post($("#knsentity").val() + "-[" + $("#knrel").val() + "]->" + $("#kneentity").val() + " 构建成功!");
+                } else {
+                    alert(resp.msg);
+                }
+            }, "JSON");
+        }
+
+        function tagdelete() {
+            $.ajax({
+                type: "DELETE",
+                url: "{{ url_for('articlenlp.KnowledgegraphBackendAction') }}",
+                data: {id: knid},
+                success: function (resp) {
+                    var result = $.parseJSON(resp);
+                    if (result.success) {
+                        $("#btn_oper_" + knid).attr("disabled", "disabled");
+                    }
+                },
+                error: function (err) {
+                    alert(err)
+                }
+            })
+        }
+    </script>
 {% endblock %}

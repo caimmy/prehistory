@@ -188,6 +188,8 @@ class BaseOperations:
                 ret_check = True
         return ret_check
 
+    def JsonResponse(self):
+        return json.dumps(self.response)
 
     @staticmethod
     def jsonEncode(data=None):
