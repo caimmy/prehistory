@@ -16,6 +16,7 @@ from flask import Blueprint, request, render_template, current_app, g, session
 from utils.http_helper import JointResponseParams, BaseOperations
 from utils.datatransform import neo4j_data_2_echarts
 from models.trunck import OpsKnowledgeDiscovery
+from utils.decorates import login_required
 from ai.aitools.GraphdbHelper import Neo4jHandler
 
 nlp_app = Blueprint("articlenlp", __name__, template_folder="templates")
@@ -119,6 +120,7 @@ def KnowledgegraphDataAction():
 
 
 @nlp_app.route("/kgbackend", methods=["GET", "POST", "DELETE"])
+@login_required
 def KnowledgegraphBackendAction():
     operation = BaseOperations()
     if "GET" == request.method:
