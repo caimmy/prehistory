@@ -1,16 +1,21 @@
 {% extends "/layout/_mbase.html" %}
-{% block title %}文献NLP{% endblock %}
+{% block title %}文献NLP-词向量分析{% endblock %}
 {% block ext_header %}
+    <script type="text/javascript" src="/static/js/js2wordcloud.js"></script>
 {% endblock %}
 {% block cur_nav_func %}文献NLP{% endblock %}
 {% block content %}
     <div class="container">
         <div class="col-md-5">
             <div class="flow">
-                <form method="post" action="{{ url_for('articlenlp.Word2vecIndexAction') }}">
+                <form method="get" action="{{ url_for('articlenlp.Word2vecIndexAction') }}">
                     <div class="input-group">
-                        <input type="text" value="{{ curpos }}" name="posword" class="form-control" placeholder="正向词 以空格拆分">
-                        <input type="text" value="{{ curneg }}" name="negword" class="form-control" placeholder="逆向词 以空格拆分">
+                        <input type="text" value="{{ curpos if curpos else '' }}" id="posword" name="posword"
+                               class="form-control"
+                               placeholder="正向词 以空格拆分">
+                        <input type="text" value="{{ curneg if curneg else '' }}" id="negword" name="negword"
+                               class="form-control"
+                               placeholder="逆向词 以空格拆分">
                         <span class="input-group-btn">
                             <select style="width: 120px;" name="book" class="form-control">
                                 {% for _b in books %}
@@ -25,28 +30,101 @@
         </div>
         <div class="col-md-9"></div>
         <div class="col-xs-10 col-md-12">
-        {% if err_tips %}
-        <div style="margin-top: 20px;" class="alert alert-danger" role="alert">{{ err_tips }}</div>
-        {% else %}
-            <div class="col-md-4">
-                <table class="table table-striped table-hover table-bordered">
-                    <thead>
-                    <tr>
-                        <th>关联词</th>
-                        <th>近似度</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for _rw in relwords %}
-                    <tr>
-                    <td>{{ _rw[0] }}</td>
-                    <td>{{ _rw[1] }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% endif %}
+            {% if err_tips %}
+                <div style="margin-top: 20px;" class="alert alert-danger" role="alert">{{ err_tips }}</div>
+            {% else %}
+                <div class="col-md-8">
+                    <div class="row" id="wordclouder" style="height: 500px;"></div>
+                </div>
+                <div class="col-md-4">
+                    {% if relwords %}
+                        <table class="table table-striped table-hover table-bordered">
+                            <thead>
+                            <tr>
+                                <th>关联词</th>
+                                <th>近似度</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for _rw in relwords %}
+                                <tr>
+                                    <td>{{ _rw[0] }}</td>
+                                    <td>{{ _rw[1] }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            /*
+            var _val = '
+            {{ relwordsjson }}';
+            console.log($.parseJSON(_val));
+            var wc = new Js2WordCloud(document.getElementById('wordclouder'))
+            wc.setOption({
+                //list: [['谈笑风生1', 80], ['谈笑风生2', 80], ['谈笑风生3', 70], ['谈笑风生4', 70], ['谈笑风生5', 60], ['谈笑风生6', 60]],
+                //color: '#15a4fa',
+
+                //: 'https://example.com/images/shape.png',     // 提供一张图片（链接方式，仅支持jpg/png），根据其形状进行词云渲染，默认为null
+                fontSizeFactor: 0.1,                                    // 当词云值相差太大，可设置此值进字体行大小微调，默认0.1
+                maxFontSize: 60,                                        // 最大fontSize，用来控制weightFactor，默认60
+                minFontSize: 12,                                        // 最小fontSize，用来控制weightFactor，默认12
+                tooltip: {
+                    show: true,                                         // 默认：false
+                    backgroundColor: 'rgba(0, 0, 0, 0.701961)',         // 默认：'rgba(0, 0, 0, 0.701961)'
+                    formatter: function (item) {                         // 数据格式化函数，item为list的一项
+                    }
+                },
+                noDataLoadingOption: {                                  // 无数据提示。
+                    backgroundColor: '#eee',
+                    text: '暂无数据',
+                    textStyle: {
+                        color: '#888',
+                        fontSize: 14
+                    }
+                }
+            })
+            */
+            {% if relwords %}
+                $.post("{{ url_for('articlenlp.Word2vecIndexAction') }}", {
+                    posword: '{{ curpos }}',
+                    negword: '{{ curneg }}',
+                    book: '{{ curbook }}'
+                }, function (resp) {
+                    console.log(resp);
+                    if (resp.success) {
+                        var wc = new Js2WordCloud(document.getElementById('wordclouder'))
+                        wc.setOption({
+                            list: resp.data,//[['谈笑风生1', 80], ['谈笑风生2', 80], ['谈笑风生3', 70], ['谈笑风生4', 70], ['谈笑风生5', 60], ['谈笑风生6', 60]],
+
+                            //: 'https://example.com/images/shape.png',     // 提供一张图片（链接方式，仅支持jpg/png），根据其形状进行词云渲染，默认为null
+                            fontSizeFactor: 0.1,                                    // 当词云值相差太大，可设置此值进字体行大小微调，默认0.1
+                            maxFontSize: 60,                                        // 最大fontSize，用来控制weightFactor，默认60
+                            minFontSize: 12,                                        // 最小fontSize，用来控制weightFactor，默认12
+                            tooltip: {
+                                show: true,                                         // 默认：false
+                                backgroundColor: 'rgba(0, 0, 0, 0.701961)',         // 默认：'rgba(0, 0, 0, 0.701961)'
+                                formatter: function (item) {                         // 数据格式化函数，item为list的一项
+                                }
+                            },
+                            noDataLoadingOption: {                                  // 无数据提示。
+                                backgroundColor: '#eee',
+                                text: '暂无数据',
+                                textStyle: {
+                                    color: '#888',
+                                    fontSize: 14
+                                }
+                            }
+                        })
+                    }
+                }, "JSON");
+            {% endif %}
+        })
+    </script>
 {% endblock %}
