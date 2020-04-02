@@ -61,7 +61,7 @@ def train_word2vector(src_words_file, modelname):
         read_book_2_words_file(src_words_file, keyword_file)
     if os.path.isfile(keyword_file):
         train_sentences = LineSentence(keyword_file)
-        model = Word2Vec(train_sentences, window=10, workers=8, sg=1, min_count=2)
+        model = Word2Vec(train_sentences, window=10, workers=8, sg=1, min_count=3, iter=20)
         model.save(application_path("ai", "models", "wordvector", modelname + ".model"))
         print("model train finished")
     else:

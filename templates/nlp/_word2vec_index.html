@@ -99,6 +99,7 @@
                 }, function (resp) {
                     console.log(resp);
                     if (resp.success) {
+                        console.log(resp.data);
                         var wc = new Js2WordCloud(document.getElementById('wordclouder'))
                         wc.setOption({
                             list: resp.data,//[['谈笑风生1', 80], ['谈笑风生2', 80], ['谈笑风生3', 70], ['谈笑风生4', 70], ['谈笑风生5', 60], ['谈笑风生6', 60]],
@@ -111,6 +112,7 @@
                                 show: true,                                         // 默认：false
                                 backgroundColor: 'rgba(0, 0, 0, 0.701961)',         // 默认：'rgba(0, 0, 0, 0.701961)'
                                 formatter: function (item) {                         // 数据格式化函数，item为list的一项
+                                    return "与 " + item[0] + " 相似度： " + item[1];
                                 }
                             },
                             noDataLoadingOption: {                                  // 无数据提示。

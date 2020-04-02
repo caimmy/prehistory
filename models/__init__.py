@@ -11,7 +11,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from config import _MYSQL_DB_DEBUG as MYSQL_DB, _MYSQL_HOST_DEBUG as MYSQL_HOST, _MYSQL_PWD_DEBUG as MYSQL_PASS, \
     _MYSQL_USER_DEBUG as MYSQL_USER, _MYSQL_PORT_DEBUG as MYSQL_PORT
 
-mysql_master_engine = create_engine("mysql+pymysql://%s:%s@%s:%d/%s?charset=utf8" % \
+mysql_master_engine = create_engine("mysql+pymysql://%s:%s@%s:%d/%s?charset=utf8&autocommit=true" % \
                               (MYSQL_USER, MYSQL_PASS, MYSQL_HOST, int(MYSQL_PORT), MYSQL_DB),
                                     pool_size=100, pool_recycle=3600, echo=DEBUG_MODE)
 
