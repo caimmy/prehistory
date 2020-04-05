@@ -61,7 +61,7 @@ def train_word2vector(src_words_file, modelname):
         read_book_2_words_file(src_words_file, keyword_file)
     if os.path.isfile(keyword_file):
         train_sentences = LineSentence(keyword_file)
-        model = Word2Vec(train_sentences, window=10, workers=8, sg=1, min_count=3, iter=20)
+        model = Word2Vec(train_sentences, window=10, workers=8, sg=1, min_count=3, iter=20, size=200)
         model.save(application_path("ai", "models", "wordvector", modelname + ".model"))
         print("model train finished")
     else:
@@ -95,10 +95,10 @@ if "__main__" == __name__:
     # read_book_2_words_file(application_path("data", "books", "二十四史全译", "二十四史全译02 汉书.txt"),
     #                        application_path("data", "books", "二十四史全译", "二十四史全译02汉书keywords.txt"))
 
-    material_name = application_path("data", "books", "二十四史全译", "二十四史全译01 史记.txt")
-    train_word2vector(material_name, "史记")
+    material_name = application_path("data", "books", "二十四史全译", "二十四史全译03_后汉书.txt")
+    train_word2vector(material_name, "后汉书")
     # for knowledge test
-    train_knowledgegraph(material_name, "史记")
+    train_knowledgegraph(material_name, "后汉书")
 
 
     # for most similar in word2vec model test
